@@ -34,7 +34,7 @@ class SlotController extends Controller
         $user = Auth::user();
         $user->slots()->detach($slot->id);
 
-        return back();
+        return back()->with('success', 'Vous vous êtes désisté avec succès.');
     }
 
     

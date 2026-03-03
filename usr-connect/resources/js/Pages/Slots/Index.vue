@@ -17,21 +17,16 @@ const isRegistered = (slot) => {
 // Gérer l'inscription ou la désinscription
 const handleSubscription = (slot) => {
     if (isRegistered(slot)) {
-        if (confirm("Voulez-vous vraiment vous désister de ce créneau ?")) {
-            router.post(
-                route("slots.unregister", slot.id),
-                {},
-                { preserveScroll: true },
-            );
+        // Pour se désister, on utilise DELETE
+        if (confirm('Es-tu sûr de vouloir te désister ?')) {
+            router.delete(route('slots.unregister', slot.id));
         }
     } else {
-        router.post(
-            route("slots.register", slot.id),
-            {},
-            { preserveScroll: true },
-        );
+        // Pour s'inscrire, on utilise POST
+        router.post(route('slots.register', slot.id));
     }
 };
+
 </script>
 
 <template>
@@ -40,7 +35,7 @@ const handleSubscription = (slot) => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h1 class="font-bold text-xl text-usr-purple leading-tight">Planning Solida'Foot</h1>
+                <h2 class="font-semibold text-xl text-usr-purple leading-tight">Planning Solida'Foot</h2>
         
                 <Link 
                     v-if="$page.props.auth.user.role === 'admin'"

@@ -39,6 +39,8 @@ Route::post('/slots', [SlotController::class, 'store'])->middleware(['auth'])->n
 // 4. L'INSCRIPTION
 Route::post('/slots/{slot}/register', [SlotController::class, 'register'])->middleware(['auth'])->name('slots.register');
 
+Route::delete('/slots/{slot}/unregister', [SlotController::class, 'unregister'])->middleware(['auth'])->name('slots.unregister');
+
 // 5. LE DÉTAIL (En dernier car le {slot} mange tout ce qui passe)
 Route::get('/slots/{slot}', [SlotController::class, 'show'])->middleware(['auth'])->name('slots.show');
 
