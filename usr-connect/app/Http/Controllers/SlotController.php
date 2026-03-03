@@ -52,6 +52,11 @@ class SlotController extends Controller
     // 1. Affiche le formulaire
     public function create()
     {
+        // Si l'utilisateur n'est pas admin, on le renvoie ailleurs
+        if (Auth::user()->role !== 'admin') {
+            return redirect()->route('slots.index')->with('error', 'Accès réservé aux administrateurs.');
+        }
+
         return Inertia::render('Slots/Create');
     }
 
@@ -70,5 +75,20 @@ class SlotController extends Controller
         Slot::create($validated);
 
         return redirect()->route('slots.index');
+    }
+
+
+    public function users()
+    {
+        // On récupère tous les utilisateurs pour pouvoir changer leur rôle
+        return Inertia::render('Admin/Users', [
+            'users' => \App\Models\User::all()
+        ]);
+    }
+
+    public function updateRole(Request $request, \App\Models\User $user)
+    {
+        $user->update(['role' => $request->role]);
+        return back();
     }
 }

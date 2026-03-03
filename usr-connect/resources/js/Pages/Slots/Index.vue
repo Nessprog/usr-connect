@@ -39,11 +39,19 @@ const handleSubscription = (slot) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-usr-purple leading-tight">
-                Planning du Solida'Foot - US Reventin
-            </h2>
+            <div class="flex justify-between items-center">
+                <h1 class="font-bold text-xl text-usr-purple leading-tight">Planning Solida'Foot</h1>
+        
+                <Link 
+                    v-if="$page.props.auth.user.role === 'admin'"
+                    :href="route('slots.create')" 
+                    class="bg-usr-purple text-white px-4 py-2 rounded-md font-bold shadow hover:bg-opacity-90 transition">
+                + Nouvelle Mission
+                </Link>
+            </div>
         </template>
 
+        
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div

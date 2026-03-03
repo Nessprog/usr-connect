@@ -41,3 +41,7 @@ Route::post('/slots/{slot}/register', [SlotController::class, 'register'])->midd
 
 // 5. LE DÉTAIL (En dernier car le {slot} mange tout ce qui passe)
 Route::get('/slots/{slot}', [SlotController::class, 'show'])->middleware(['auth'])->name('slots.show');
+
+Route::get('/admin/users', [SlotController::class, 'users'])->name('admin.users');
+
+Route::patch('/admin/users/{user}', [SlotController::class, 'updateRole'])->name('admin.users.update');
