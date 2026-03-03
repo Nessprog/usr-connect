@@ -47,3 +47,5 @@ Route::get('/slots/{slot}', [SlotController::class, 'show'])->middleware(['auth'
 Route::get('/admin/users', [SlotController::class, 'users'])->name('admin.users');
 
 Route::patch('/admin/users/{user}', [SlotController::class, 'updateRole'])->name('admin.users.update');
+
+Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');

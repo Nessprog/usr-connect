@@ -37,7 +37,7 @@ class SlotController extends Controller
         return back()->with('success', 'Vous vous êtes désisté avec succès.');
     }
 
-    
+
     public function show(Slot $slot)
     {
         // On charge les utilisateurs inscrits pour ce créneau précis
@@ -90,5 +90,22 @@ class SlotController extends Controller
     {
         $user->update(['role' => $request->role]);
         return back();
+    }
+
+    public function destroy(Slot $slot)
+    {
+        // Sécurité : Seul l'admin peut supprimer
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        // On retire d'abord tous les inscrits (nettoyage de la table pivot)
+        $slot->users()->detach();
+
+        // On supprime la mission
+        $slot->delete();
+
+        // On redirige vers l'accueil avec un message
+        return redirect()->route('slots.index')->with('message', 'Mission supprimée avec succès.');
     }
 }
