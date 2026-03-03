@@ -49,3 +49,7 @@ Route::get('/admin/users', [SlotController::class, 'users'])->name('admin.users'
 Route::patch('/admin/users/{user}', [SlotController::class, 'updateRole'])->name('admin.users.update');
 
 Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');
+
+Route::get('/slots/{slot}/edit', [SlotController::class, 'edit'])->name('slots.edit');
+
+Route::put('/slots/{slot}', [SlotController::class, 'update'])->name('slots.update');

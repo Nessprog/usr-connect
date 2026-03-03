@@ -66,15 +66,38 @@ class SlotController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'start_time' => 'required',
-            'end_time' => 'required',
-            'min_volunteers' => 'required|integer',
-            'max_volunteers' => 'required|integer',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+            'min_volunteers' => 'required|integer|min:1',
+            'max_volunteers' => 'required|integer|min:1|gte:min_volunteers',
         ]);
 
         Slot::create($validated);
 
-        return redirect()->route('slots.index');
+        return redirect()->route('slots.index')->with('success', 'Mission créée !');
+    }
+
+    // 3. Affiche le formulaire de modification
+    public function edit(Slot $slot)
+    {
+        return Inertia::render('Slots/Edit', ['slot' => $slot]);
+    }
+
+    // 4. Reçoit les données modifiées et les enregistre
+    public function update(Request $request, Slot $slot)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+            'min_volunteers' => 'required|integer|min:1',
+            'max_volunteers' => 'required|integer|min:1|gte:min_volunteers',
+        ]);
+
+        $slot->update($validated);
+
+        return redirect()->route('slots.show', $slot->id)->with('success', 'Mission mise à jour !');
     }
 
 

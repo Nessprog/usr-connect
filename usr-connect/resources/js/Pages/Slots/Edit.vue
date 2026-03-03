@@ -2,17 +2,20 @@
 import { useForm, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
+const props = defineProps({ slot: Object });
+
 const form = useForm({
-    title: "",
-    description: "",
-    start_time: "",
-    end_time: "",
-    min_volunteers: 1,
-    max_volunteers: 5,
+    title: props.slot.title,
+    description: props.slot.description,
+    start_time: props.slot.start_time,
+    end_time: props.slot.end_time,
+    min_volunteers: props.slot.min_volunteers,
+    max_volunteers: props.slot.max_volunteers,
 });
 
 const submit = () => {
-    form.post(route("slots.store"));
+    // On utilise put pour une modification
+    form.put(route("slots.update", props.slot.id));
 };
 </script>
 
