@@ -47,4 +47,28 @@ class SlotController extends Controller
             'slot' => $slot
         ]);
     }
+
+
+    // 1. Affiche le formulaire
+    public function create()
+    {
+        return Inertia::render('Slots/Create');
+    }
+
+    // 2. Reçoit les données et les enregistre
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_time' => 'required',
+            'end_time' => 'required',
+            'min_volunteers' => 'required|integer',
+            'max_volunteers' => 'required|integer',
+        ]);
+
+        Slot::create($validated);
+
+        return redirect()->route('slots.index');
+    }
 }

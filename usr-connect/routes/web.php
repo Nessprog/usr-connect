@@ -25,17 +25,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
-Route::get('/slots', [SlotController::class, 'index'])
-    ->middleware(['auth'])
-    ->name('slots.index');
+// 1. La liste globale
+Route::get('/slots', [SlotController::class, 'index'])->middleware(['auth'])->name('slots.index');
 
+// 2. LE FORMULAIRE (Obligatoirement AVANT le paramètre {slot})
+Route::get('/slots/create', [SlotController::class, 'create'])->middleware(['auth'])->name('slots.create');
 
-Route::post('/slots/{slot}/register', [SlotController::class, 'register'])
-    ->middleware(['auth'])
-    ->name('slots.register');
+// 3. L'ENREGISTREMENT (POST)
+Route::post('/slots', [SlotController::class, 'store'])->middleware(['auth'])->name('slots.store');
 
-Route::get('/slots/{slot}', [SlotController::class, 'show'])
-    ->middleware(['auth'])
-    ->name('slots.show');
+// 4. L'INSCRIPTION
+Route::post('/slots/{slot}/register', [SlotController::class, 'register'])->middleware(['auth'])->name('slots.register');
+
+// 5. LE DÉTAIL (En dernier car le {slot} mange tout ce qui passe)
+Route::get('/slots/{slot}', [SlotController::class, 'show'])->middleware(['auth'])->name('slots.show');
