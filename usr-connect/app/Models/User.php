@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Slot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,7 +21,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
+        'role', // Ajoute bien 'role' ici si ce n'est pas fait
     ];
 
     /**
@@ -49,6 +52,7 @@ class User extends Authenticatable
     // On dit à Laravel que les utilisateurs peuvent être liés à plusieurs créneaux
     public function slots()
     {
+        // Un utilisateur peut être inscrit à plusieurs missions (slots)
         return $this->belongsToMany(Slot::class);
     }
 }

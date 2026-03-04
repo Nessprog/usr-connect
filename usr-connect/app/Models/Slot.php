@@ -16,4 +16,9 @@ class Slot extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+    ];
 }

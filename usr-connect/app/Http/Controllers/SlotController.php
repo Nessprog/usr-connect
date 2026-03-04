@@ -15,7 +15,11 @@ class SlotController extends Controller
         $slots = Slot::with(['users'])->withCount('users')->orderBy('start_time', 'asc')->get();
 
         return Inertia::render('Slots/Index', [
-            'slots' => $slots
+            'slots' => Slot::with('users')
+                ->withCount('users')
+                ->where('start_time', '>=', now()) // On ne prend que le futur
+                ->orderBy('start_time', 'asc')    // La plus proche en premier
+                ->get(),
         ]);
     }
 
@@ -24,8 +28,9 @@ class SlotController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $user->slots()->syncWithoutDetaching([$slot->id]);
+        $jour = $slot->start_time->translatedFormat('l'); // ex: "samedi"
 
-        return back();
+        return back()->with('message', "Inscription validée pour la mission \"$slot->title\" ce $jour !");
     }
 
     public function unregister(Slot $slot)
@@ -34,7 +39,7 @@ class SlotController extends Controller
         $user = Auth::user();
         $user->slots()->detach($slot->id);
 
-        return back()->with('success', 'Vous vous êtes désisté avec succès.');
+        return back()->with('message', "Ton désistement pour la mission \"$slot->title\" a bien été pris en compte.");
     }
 
 
@@ -55,6 +60,7 @@ class SlotController extends Controller
         // Si l'utilisateur n'est pas admin, on le renvoie ailleurs
         if (Auth::user()->role !== 'admin') {
             return redirect()->route('slots.index')->with('error', 'Accès réservé aux administrateurs.');
+            return redirect()->route('slots.index')->with('message', "La mission \"$slot->title\" a été créée avec succès.");
         }
 
         return Inertia::render('Slots/Create');

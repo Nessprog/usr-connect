@@ -1,9 +1,9 @@
 <script setup>
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Link, useForm, usePage } from "@inertiajs/vue3";
 
 defineProps({
     mustVerifyEmail: {
@@ -88,6 +88,18 @@ const form = useForm({
                 >
                     A new verification link has been sent to your email address.
                 </div>
+            </div>
+
+            <div class="mt-6">
+                <InputLabel for="phone" value="Téléphone" />
+                <TextInput
+                    id="phone"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.phone"
+                    autocomplete="tel"
+                />
+                <InputError class="mt-2" :message="form.errors.phone" />
             </div>
 
             <div class="flex items-center gap-4">

@@ -6,6 +6,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
+import FlashMessage from "@/Components/FlashMessage.vue";
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -37,7 +38,7 @@ const showingNavigationDropdown = ref(false);
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
-                                    Dashboard
+                                    Tableau de bord
                                 </NavLink>
                                 <NavLink
                                     :href="route('slots.index')"
@@ -46,13 +47,10 @@ const showingNavigationDropdown = ref(false);
                                     Planning
                                 </NavLink>
                                 <NavLink
-                                    v-if="
-                                        $page.props.auth.user.role === 'admin'
-                                    "
-                                    :href="route('admin.users')"
-                                    :active="route().current('admin.users')"
+                                    :href="route('users.index')"
+                                    :active="route().current('users.index')"
                                 >
-                                    Gestion Utilisateurs
+                                    Membres
                                 </NavLink>
                             </div>
                         </div>
@@ -159,7 +157,7 @@ const showingNavigationDropdown = ref(false);
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
                         >
-                            Dashboard
+                            Tableau de bord
                         </ResponsiveNavLink>
 
                         <ResponsiveNavLink
@@ -173,7 +171,7 @@ const showingNavigationDropdown = ref(false);
                             :href="route('admin.users')"
                             :active="route().current('admin.users')"
                         >
-                            Gestion Utilisateurs
+                            Membres
                         </ResponsiveNavLink>
                     </div>
 
@@ -212,9 +210,7 @@ const showingNavigationDropdown = ref(false);
             </header>
 
             <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
+            <main><FlashMessage /> <slot /></main>
         </div>
     </div>
 </template>

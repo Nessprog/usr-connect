@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Slot;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\SlotController;
+use App\Models\User;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -15,9 +19,30 @@ Route::get('/', function () {
     ]);
 });
 
+// 1. La route du Dashboard
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
+
+    return Inertia::render('Dashboard', [
+        'totalMissions' => \App\Models\Slot::where('start_time', '>', now())->count(),
+        'myMissionsCount' => $user->slots()->count(),
+        'nextMission' => $user->slots()
+            ->where('start_time', '>', now())
+            ->orderBy('start_time', 'asc')
+            ->first(),
+        'totalVolunteers' => \App\Models\User::count(),
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// 2. La route des Membres (Celle qui crashait)
+Route::get('/membres', function () {
+    return Inertia::render('Users/Index', [
+        'users' => \App\Models\User::withCount('slots')
+            ->orderBy('slots_count', 'desc') // On met les plus actifs en haut !
+            ->get()
+    ]);
+})->middleware(['auth', 'verified'])->name('users.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -53,3 +78,25 @@ Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.
 Route::get('/slots/{slot}/edit', [SlotController::class, 'edit'])->name('slots.edit');
 
 Route::put('/slots/{slot}', [SlotController::class, 'update'])->name('slots.update');
+
+// Qui est inscrit sur l'application ? (pour les admins)
+Route::get('/users', function () {
+    return Inertia::render('Users/Index', [
+        'users' => \App\Models\User::withCount('slots')->get()
+    ]);
+})->middleware(['auth', 'admin'])->name('users.index');
+
+Route::middleware(['auth'])->group(function () {
+
+    // Route pour le rôle
+    Route::patch('/users/{user}/role', function (Request $request, User $user) {
+        $user->update(['role' => $request->role]);
+        return back()->with('message', "Rôle de {$user->name} mis à jour !");
+    })->name('users.update-role');
+
+    // Route pour supprimer
+    Route::delete('/users/{user}', function (User $user) {
+        $user->delete();
+        return back()->with('message', "Utilisateur supprimé.");
+    })->name('users.destroy');
+});

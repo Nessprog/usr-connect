@@ -18,15 +18,14 @@ const isRegistered = (slot) => {
 const handleSubscription = (slot) => {
     if (isRegistered(slot)) {
         // Pour se désister, on utilise DELETE
-        if (confirm('Es-tu sûr de vouloir te désister ?')) {
-            router.delete(route('slots.unregister', slot.id));
+        if (confirm("Es-tu sûr de vouloir te désister ?")) {
+            router.delete(route("slots.unregister", slot.id));
         }
     } else {
         // Pour s'inscrire, on utilise POST
-        router.post(route('slots.register', slot.id));
+        router.post(route("slots.register", slot.id));
     }
 };
-
 </script>
 
 <template>
@@ -35,18 +34,20 @@ const handleSubscription = (slot) => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-usr-purple leading-tight">Planning Solida'Foot</h2>
-        
-                <Link 
+                <h2 class="font-semibold text-xl text-usr-purple leading-tight">
+                    Planning Solida'Foot
+                </h2>
+
+                <Link
                     v-if="$page.props.auth.user.role === 'admin'"
-                    :href="route('slots.create')" 
-                    class="bg-usr-purple text-white px-4 py-2 rounded-md font-bold shadow hover:bg-opacity-90 transition">
-                + Nouvelle Mission
+                    :href="route('slots.create')"
+                    class="bg-usr-purple text-white px-4 py-2 rounded-md font-bold shadow hover:bg-opacity-90 transition"
+                >
+                    + Nouvelle Mission
                 </Link>
             </div>
         </template>
 
-        
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div
@@ -59,9 +60,37 @@ const handleSubscription = (slot) => {
                     >
                         <Link
                             :href="route('slots.show', slot.id)"
-                            class="text-lg font-bold text-gray-900 hover:text-usr-purple transition">
+                            class="text-lg font-bold text-gray-900 hover:text-usr-purple transition"
+                        >
                             {{ slot.title }}
                         </Link>
+                        <div
+                            class="flex items-center text-sm text-gray-500 mb-2"
+                        >
+                            <span
+                                >📅
+                                {{
+                                    new Date(
+                                        slot.start_time,
+                                    ).toLocaleDateString("fr-FR", {
+                                        weekday: "short",
+                                        day: "numeric",
+                                        month: "short",
+                                    })
+                                }}
+                            </span>
+                            <span class="ml-3"
+                                >🕒
+                                {{
+                                    new Date(
+                                        slot.start_time,
+                                    ).toLocaleTimeString("fr-FR", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    })
+                                }}</span
+                            >
+                        </div>
                         <p class="text-gray-600 text-sm mt-2 h-12">
                             {{ slot.description }}
                         </p>
