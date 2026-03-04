@@ -11,18 +11,22 @@ class SlotController extends Controller
 {
     public function index()
     {
-        // "withCount('users')" va ajouter automatiquement une colonne "users_count" à nos objets
-        $slots = Slot::with(['users'])->withCount('users')->orderBy('start_time', 'asc')->get();
+        $user = Auth::user();
+
+        $slots = Slot::withCount('users')
+            ->where('start_time', '>=', now())
+            ->orderBy('start_time', 'asc')
+            ->get()
+            ->map(function ($slot) use ($user) {
+                // On ajoute une propriété 'is_registered' à chaque slot
+                $slot->is_registered = $slot->users->contains($user->id);
+                return $slot;
+            });
 
         return Inertia::render('Slots/Index', [
-            'slots' => Slot::with('users')
-                ->withCount('users')
-                ->where('start_time', '>=', now()) // On ne prend que le futur
-                ->orderBy('start_time', 'asc')    // La plus proche en premier
-                ->get(),
+            'slots' => $slots,
         ]);
     }
-
     public function register(Slot $slot)
     {
         /** @var \App\Models\User $user */

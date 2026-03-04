@@ -1,148 +1,144 @@
 <script setup>
-import { Head, router, usePage, Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { Head, Link } from "@inertiajs/vue3";
 
 const props = defineProps({
     slots: Array,
 });
 
-const page = usePage();
-const userId = page.props.auth.user.id;
-
-// Vérifier si l'utilisateur est inscrit
-const isRegistered = (slot) => {
-    return slot.users.some((user) => user.id === userId);
+// Formatage : mercredi 20 mai
+const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+    });
 };
 
-// Gérer l'inscription ou la désinscription
-const handleSubscription = (slot) => {
-    if (isRegistered(slot)) {
-        // Pour se désister, on utilise DELETE
-        if (confirm("Es-tu sûr de vouloir te désister ?")) {
-            router.delete(route("slots.unregister", slot.id));
-        }
-    } else {
-        // Pour s'inscrire, on utilise POST
-        router.post(route("slots.register", slot.id));
-    }
+// Formatage : à 18:00
+const formatTime = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date
+        .toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+        .replace(":", "h");
 };
 </script>
 
 <template>
-    <Head title="Planning Bénévoles" />
+    <Head title="Planning" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-usr-purple leading-tight">
-                    Planning Solida'Foot
-                </h2>
-
-                <Link
-                    v-if="$page.props.auth.user.role === 'admin'"
-                    :href="route('slots.create')"
-                    class="bg-usr-purple text-white px-4 py-2 rounded-md font-bold shadow hover:bg-opacity-90 transition"
-                >
-                    + Nouvelle Mission
-                </Link>
-            </div>
-        </template>
-
-        <div class="py-12">
+        <div class="py-12 bg-gray-50 min-h-screen">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center mb-10">
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
+                        Planning Solida'Foot
+                    </h1>
+                    <Link
+                        v-if="$page.props.auth?.user?.role === 'admin'"
+                        :href="route('slots.create')"
+                        class="bg-[#5D2E8E] text-white px-6 py-2 rounded-xl font-black uppercase text-sm tracking-widest shadow-md hover:bg-opacity-90 transition"
+                    >
+                        + NOUVELLE MISSION
+                    </Link>
+                </div>
+
                 <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
                     <div
                         v-for="slot in slots"
                         :key="slot.id"
-                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-t-4 border-usr-purple transition hover:shadow-md"
+                        class="bg-white rounded-[2rem] shadow-sm border-t-[8px] border-[#5D2E8E] p-8 relative flex flex-col justify-between"
                     >
-                        <Link
-                            :href="route('slots.show', slot.id)"
-                            class="text-lg font-bold text-gray-900 hover:text-usr-purple transition"
-                        >
-                            {{ slot.title }}
-                        </Link>
-                        <div
-                            class="flex items-center text-sm text-gray-500 mb-2"
-                        >
-                            <span
-                                >📅
-                                {{
-                                    new Date(
-                                        slot.start_time,
-                                    ).toLocaleDateString("fr-FR", {
-                                        weekday: "short",
-                                        day: "numeric",
-                                        month: "short",
-                                    })
-                                }}
-                            </span>
-                            <span class="ml-3"
-                                >🕒
-                                {{
-                                    new Date(
-                                        slot.start_time,
-                                    ).toLocaleTimeString("fr-FR", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    })
-                                }}</span
-                            >
-                        </div>
-                        <p class="text-gray-600 text-sm mt-2 h-12">
-                            {{ slot.description }}
-                        </p>
-
-                        <div class="mt-6">
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700"
-                                    >Remplissage</span
+                        <div>
+                            <div class="flex justify-between items-start mb-6">
+                                <Link
+                                    :href="route('slots.show', slot.id)"
+                                    class="hover:opacity-70 transition"
                                 >
-                                <span class="text-sm font-medium text-gray-700"
-                                    >{{ slot.users_count }} /
-                                    {{ slot.max_volunteers }}</span
-                                >
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <h3
+                                        class="text-xl font-black text-gray-900 leading-tight"
+                                    >
+                                        {{ slot.title }}
+                                    </h3>
+                                </Link>
                                 <div
-                                    class="bg-usr-purple h-2.5 rounded-full transition-all duration-500"
-                                    :style="{
-                                        width:
-                                            (slot.users_count /
-                                                slot.max_volunteers) *
-                                                100 +
-                                            '%',
-                                    }"
-                                ></div>
+                                    class="bg-[#F5F3FF] text-[#5D2E8E] text-[11px] font-bold px-3 py-2 rounded-lg whitespace-nowrap uppercase tracking-tighter"
+                                >
+                                    {{ slot.users_count || 0 }} /
+                                    {{ slot.max_volunteers || 30 }} bénévoles
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <div
+                                    class="flex justify-between items-center mb-2"
+                                >
+                                    <span
+                                        class="text-[10px] font-black text-black uppercase tracking-widest italic"
+                                        >REMPLISSAGE</span
+                                    >
+                                </div>
+                                <div
+                                    class="w-full bg-gray-100 rounded-full h-2"
+                                >
+                                    <div
+                                        class="bg-[#5D2E8E] h-2 rounded-full transition-all duration-1000"
+                                        :style="{
+                                            width:
+                                                Math.min(
+                                                    ((slot.users_count || 0) /
+                                                        (slot.max_volunteers ||
+                                                            30)) *
+                                                        100,
+                                                    100,
+                                                ) + '%',
+                                        }"
+                                    ></div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="space-y-1 mb-8 text-[15px] font-medium text-black normal-case"
+                            >
+                                <p class="flex items-center">
+                                    <span class="mr-2">🗓️</span>
+                                    {{ formatDate(slot.start_time) }}
+                                </p>
+                                <p class="flex items-center">
+                                    <span class="mr-2">🕒</span> à
+                                    {{ formatTime(slot.start_time) }}
+                                </p>
                             </div>
                         </div>
 
-                        <button
-                            @click="handleSubscription(slot)"
-                            :class="
-                                isRegistered(slot)
-                                    ? 'bg-red-500 hover:bg-red-600'
-                                    : 'bg-usr-purple hover:bg-opacity-90'
-                            "
-                            class="w-full mt-6 text-white font-bold py-2 px-4 rounded transition shadow-md"
-                        >
-                            {{
-                                isRegistered(slot)
-                                    ? "Se désister"
-                                    : "Rejoindre l'équipe"
-                            }}
-                        </button>
-                    </div>
+                        <div class="mt-4">
+                            <div v-if="slot.is_registered">
+                                <Link
+                                    :href="route('slots.unregister', slot.id)"
+                                    method="delete"
+                                    as="button"
+                                    class="w-full text-center bg-red-600 text-white py-4 rounded-2xl font-bold text-base uppercase tracking-widest hover:bg-red-500 transition shadow-sm"
+                                >
+                                    SE DÉSISTER
+                                </Link>
+                            </div>
 
-                    <div
-                        v-if="slots.length === 0"
-                        class="text-center py-10 bg-white rounded-lg col-span-full shadow"
-                    >
-                        <p class="text-gray-500 italic">
-                            Aucun créneau n'est disponible pour le moment.
-                        </p>
+                            <div v-else>
+                                <Link
+                                    :href="route('slots.register', slot.id)"
+                                    method="post"
+                                    as="button"
+                                    class="w-full text-center bg-[#5D2E8E] text-white py-4 rounded-2xl font-black text-base uppercase tracking-widest hover:bg-opacity-90 transition shadow-md"
+                                >
+                                    REJOINDRE
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
