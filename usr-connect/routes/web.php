@@ -1,14 +1,20 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SlotController;
 use App\Models\Slot;
+use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Http\Controllers\SlotController;
-use App\Models\User;
+
+/*
+|--------------------------------------------------------------------------
+| 1. ROUTES PUBLIQUES (Accès sans connexion)
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -19,84 +25,78 @@ Route::get('/', function () {
     ]);
 });
 
-// 1. La route du Dashboard
-Route::get('/dashboard', function () {
-    /** @var \App\Models\User $user */
-    $user = Auth::user();
+/*
+|--------------------------------------------------------------------------
+| 2. ZONE CONNECTÉE (Middleware 'auth' uniquement)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified'])->group(function () {
 
-    return Inertia::render('Dashboard', [
-        'totalMissions' => \App\Models\Slot::where('start_time', '>', now())->count(),
-        'myMissionsCount' => $user->slots()->count(),
-        'nextMission' => $user->slots()
-            ->where('start_time', '>', now())
-            ->orderBy('start_time', 'asc')
-            ->first(),
-        'totalVolunteers' => \App\Models\User::count(),
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+    // --- DASHBOARD ---
+    Route::get('/dashboard', function () {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        return Inertia::render('Dashboard', [
+            'totalMissions'   => Slot::where('start_time', '>', now())->count(),
+            'myMissionsCount' => $user->slots()->count(),
+            'nextMission'     => $user->slots()
+                ->where('start_time', '>', now())
+                ->orderBy('start_time', 'asc')
+                ->first(),
+            'totalVolunteers' => User::count(),
+        ]);
+    })->name('dashboard');
 
-// 2. La route des Membres (Celle qui crashait)
-Route::get('/membres', function () {
-    return Inertia::render('Users/Index', [
-        'users' => \App\Models\User::withCount('slots')
-            ->orderBy('slots_count', 'desc') // On met les plus actifs en haut !
-            ->get()
-    ]);
-})->middleware(['auth', 'verified'])->name('users.index');
-
-Route::middleware('auth')->group(function () {
+    // --- PROFIL ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-require __DIR__ . '/auth.php';
+    // --- PLANNING & MISSIONS (SLOTS) ---
+    Route::get('/slots', [SlotController::class, 'index'])->name('slots.index');
+    Route::get('/slots/create', [SlotController::class, 'create'])->name('slots.create');
+    Route::post('/slots', [SlotController::class, 'store'])->name('slots.store');
 
-// 1. La liste globale
-Route::get('/slots', [SlotController::class, 'index'])->middleware(['auth'])->name('slots.index');
+    // Inscriptions
+    Route::post('/slots/{slot}/register', [SlotController::class, 'register'])->name('slots.register');
+    Route::delete('/slots/{slot}/unregister', [SlotController::class, 'unregister'])->name('slots.unregister');
 
-// 2. LE FORMULAIRE (Obligatoirement AVANT le paramètre {slot})
-Route::get('/slots/create', [SlotController::class, 'create'])->middleware(['auth'])->name('slots.create');
+    // Détails, Edition, Update, Delete
+    Route::get('/slots/{slot}', [SlotController::class, 'show'])->name('slots.show');
+    Route::get('/slots/{slot}/edit', [SlotController::class, 'edit'])->name('slots.edit');
+    Route::put('/slots/{slot}', [SlotController::class, 'update'])->name('slots.update');
+    Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');
 
-// 3. L'ENREGISTREMENT (POST)
-Route::post('/slots', [SlotController::class, 'store'])->middleware(['auth'])->name('slots.store');
+    // --- GESTION DES MEMBRES ---
+    // On utilise users.index pour tout le monde (filtré dans la vue)
+    Route::get('/membres', function () {
+        return Inertia::render('Users/Index', [
+            'users' => User::withCount('slots')
+                ->orderBy('slots_count', 'desc')
+                ->get()
+        ]);
+    })->name('users.index');
 
-// 4. L'INSCRIPTION
-Route::post('/slots/{slot}/register', [SlotController::class, 'register'])->middleware(['auth'])->name('slots.register');
-
-Route::delete('/slots/{slot}/unregister', [SlotController::class, 'unregister'])->middleware(['auth'])->name('slots.unregister');
-
-// 5. LE DÉTAIL (En dernier car le {slot} mange tout ce qui passe)
-Route::get('/slots/{slot}', [SlotController::class, 'show'])->middleware(['auth'])->name('slots.show');
-
-Route::get('/admin/users', [SlotController::class, 'users'])->name('admin.users');
-
-Route::patch('/admin/users/{user}', [SlotController::class, 'updateRole'])->name('admin.users.update');
-
-Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');
-
-Route::get('/slots/{slot}/edit', [SlotController::class, 'edit'])->name('slots.edit');
-
-Route::put('/slots/{slot}', [SlotController::class, 'update'])->name('slots.update');
-
-// Qui est inscrit sur l'application ? (pour les admins)
-Route::get('/users', function () {
-    return Inertia::render('Users/Index', [
-        'users' => \App\Models\User::withCount('slots')->get()
-    ]);
-})->middleware(['auth', 'admin'])->name('users.index');
-
-Route::middleware(['auth'])->group(function () {
-
-    // Route pour le rôle
+    // Actions sur les membres (Rôle et Suppression)
     Route::patch('/users/{user}/role', function (Request $request, User $user) {
         $user->update(['role' => $request->role]);
         return back()->with('message', "Rôle de {$user->name} mis à jour !");
     })->name('users.update-role');
 
-    // Route pour supprimer
     Route::delete('/users/{user}', function (User $user) {
         $user->delete();
         return back()->with('message', "Utilisateur supprimé.");
     })->name('users.destroy');
+
+    // Route de secours si ton menu appelle encore admin.users
+    Route::get('/admin/users', function () {
+        return redirect()->route('users.index');
+    })->name('admin.users');
 });
+
+/*
+|--------------------------------------------------------------------------
+| 3. AUTHENTIFICATION (Login, Register, etc.)
+|--------------------------------------------------------------------------
+*/
+require __DIR__ . '/auth.php';
