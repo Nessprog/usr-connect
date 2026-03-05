@@ -13,15 +13,10 @@ class SlotController extends Controller
     {
         $user = Auth::user();
 
-        $slots = Slot::withCount('users')
-            ->where('start_time', '>=', now())
+        // On ne récupère que les missions dont la fin est dans le futur
+        $slots = Slot::where('end_time', '>=', now())
             ->orderBy('start_time', 'asc')
-            ->get()
-            ->map(function ($slot) use ($user) {
-                // On ajoute une propriété 'is_registered' à chaque slot
-                $slot->is_registered = $slot->users->contains($user->id);
-                return $slot;
-            });
+            ->get();
 
         return Inertia::render('Slots/Index', [
             'slots' => $slots,
@@ -78,6 +73,27 @@ class SlotController extends Controller
             'categoryName' => $categoryName
         ]);
     }
+
+    public function mySlots()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $slots = $user->slots() // On passe par la relation définie dans le modèle User
+            ->withCount('users')
+            ->orderBy('start_time', 'asc')
+            ->get()
+            ->map(function ($slot) {
+                $slot->is_registered = true; // Par définition, s'il est ici, il est inscrit
+                return $slot;
+            });
+
+        return Inertia::render('Slots/MySlots', [
+            'slots' => $slots
+        ]);
+    }
+
+
 
 
     // 1. Affiche le formulaire
@@ -162,5 +178,17 @@ class SlotController extends Controller
 
         // On redirige vers l'accueil avec un message
         return redirect()->route('slots.index')->with('message', 'Mission supprimée avec succès.');
+    }
+
+    public function archives()
+    {
+        $slots = Slot::withCount('users')
+            ->where('end_time', '<', now()) // Uniquement le passé
+            ->orderBy('start_time', 'desc')
+            ->get();
+
+        return Inertia::render('Slots/Archives', [
+            'slots' => $slots
+        ]);
     }
 }

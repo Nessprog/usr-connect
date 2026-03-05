@@ -47,6 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('dashboard');
 
+    Route::get('/mes-missions', [SlotController::class, 'mySlots'])->name('slots.my-slots');
+
     // --- PROFIL ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -58,15 +60,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/slots', [SlotController::class, 'store'])->name('slots.store');
     Route::get('/slots/category/{category}', [SlotController::class, 'category'])->name('slots.category');
 
+
     // Inscriptions
     Route::post('/slots/{slot}/register', [SlotController::class, 'register'])->name('slots.register');
     Route::delete('/slots/{slot}/unregister', [SlotController::class, 'unregister'])->name('slots.unregister');
 
-    // Détails, Edition, Update, Delete
+    // Détails, Edition, Update, Delete, Archives
     Route::get('/slots/{slot}', [SlotController::class, 'show'])->name('slots.show');
     Route::get('/slots/{slot}/edit', [SlotController::class, 'edit'])->name('slots.edit');
     Route::put('/slots/{slot}', [SlotController::class, 'update'])->name('slots.update');
     Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');
+    Route::get('/slots/archives', [SlotController::class, 'archives'])->name('slots.archives');
 
     // --- GESTION DES MEMBRES ---
     // On utilise users.index pour tout le monde (filtré dans la vue)

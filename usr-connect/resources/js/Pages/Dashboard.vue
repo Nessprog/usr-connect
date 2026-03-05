@@ -53,24 +53,45 @@ const formatDate = (dateString) => {
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
+                    <component
+                        :is="stat.label === 'Missions à venir' ? Link : 'div'"
                         v-for="stat in stats"
                         :key="stat.label"
-                        class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4"
+                        :href="
+                            stat.label === 'Missions à venir'
+                                ? route('slots.my-slots')
+                                : null
+                        "
+                        class="bg-white p-6 rounded-[2.5rem] shadow-sm flex items-center transition-all"
+                        :class="{
+                            'hover:shadow-md hover:border-b-4 hover:border-[#5D2E8E] group cursor-pointer':
+                                stat.label === 'Missions à venir',
+                        }"
                     >
-                        <div class="text-3xl">{{ stat.icon }}</div>
+                        <div
+                            class="p-3 rounded-2xl mr-4 transition-transform"
+                            :class="[
+                                stat.label === 'Missions à venir'
+                                    ? 'bg-blue-100 group-hover:scale-110'
+                                    : stat.label === 'Mes inscriptions'
+                                      ? 'bg-green-100'
+                                      : 'bg-purple-100',
+                            ]"
+                        >
+                            <span class="text-2xl">{{ stat.icon }}</span>
+                        </div>
                         <div>
                             <p
-                                class="text-sm text-gray-500 uppercase font-bold"
+                                class="text-gray-500 font-bold uppercase text-[10px] tracking-widest"
                             >
                                 {{ stat.label }}
                             </p>
-                            <p class="text-2xl font-black text-usr-purple">
+                            <p class="text-2xl font-black text-gray-900">
                                 {{ stat.value }}
                             </p>
                         </div>
-                    </div>
+                    </component>
                 </div>
 
                 <div
@@ -84,7 +105,7 @@ const formatDate = (dateString) => {
 
                     <div
                         v-if="nextMission"
-                        class="bg-purple-50 border border-purple-100 rounded-lg p-4 flex justify-between items-center"
+                        class="bg-purple-50 border border-purple-100 rounded-lg p-3 flex justify-between items-center"
                     >
                         <div>
                             <p class="font-bold text-usr-purple">
@@ -95,8 +116,9 @@ const formatDate = (dateString) => {
                             </p>
                         </div>
                         <Link
-                            :href="route('slots.show', nextMission.id)"
-                            class="text-usr-purple font-bold text-sm underline"
+                            v-if="nextMission"
+                            :href="route('slots.my-slots')"
+                            class="text-[#5D2E8E] font-bold text-sm hover:underline"
                         >
                             Détails
                         </Link>
