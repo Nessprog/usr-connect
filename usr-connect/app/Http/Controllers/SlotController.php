@@ -57,6 +57,28 @@ class SlotController extends Controller
         ]);
     }
 
+    public function category($categoryName)
+    {
+        $user = Auth::user();
+
+        // On récupère uniquement les missions de la catégorie choisie
+        $slots = Slot::withCount('users')
+            ->where('category', $categoryName)
+            ->where('start_time', '>=', now()) // Optionnel : seulement les missions futures
+            ->orderBy('start_time', 'asc')
+            ->get()
+            ->map(function ($slot) use ($user) {
+                // Indispensable pour ton bouton Rejoindre/Désister
+                $slot->is_registered = $slot->users->contains($user->id);
+                return $slot;
+            });
+
+        return Inertia::render('Slots/Category', [
+            'slots' => $slots,
+            'categoryName' => $categoryName
+        ]);
+    }
+
 
     // 1. Affiche le formulaire
     public function create()
