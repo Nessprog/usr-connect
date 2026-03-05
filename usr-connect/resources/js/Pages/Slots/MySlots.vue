@@ -49,23 +49,36 @@ const formatTime = (dateString) => {
                 <div
                     class="mb-12 bg-[#5D2E8E] p-8 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden"
                 >
-                    <div class="relative z-10">
-                        <h1
-                            class="text-2xl sm:text-4xl font-black mb-2 italic uppercase"
-                        >
-                            Mon Planning
-                        </h1>
-                        <p
-                            class="text-purple-200 font-bold uppercase tracking-widest text-sm"
-                        >
-                            {{ slots.length }} mission{{
-                                slots.length > 1 ? "s" : ""
-                            }}
-                            • {{ totalHours }}h de présence
-                        </p>
-                    </div>
                     <div
-                        class="absolute right-[-20px] top-[-20px] text-[150px] opacity-10 rotate-12"
+                        class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6"
+                    >
+                        <div>
+                            <h1
+                                class="text-3xl sm:text-4xl font-black mb-2 italic uppercase"
+                            >
+                                Mon Planning
+                            </h1>
+                            <p
+                                class="text-purple-200 font-bold uppercase tracking-widest text-sm"
+                            >
+                                {{ slots.length }} mission{{
+                                    slots.length > 1 ? "s" : ""
+                                }}
+                                • {{ totalHours }}h de présence
+                            </p>
+                        </div>
+
+                        <Link
+                            :href="route('slots.index')"
+                            class="bg-white text-[#5D2E8E] px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-lg inline-flex items-center justify-center whitespace-nowrap"
+                        >
+                            <span class="mr-2 text-lg">🔍</span>
+                            Voir les pôles
+                        </Link>
+                    </div>
+
+                    <div
+                        class="absolute right-[-20px] top-[-20px] text-[150px] opacity-10 rotate-12 pointer-events-none"
                     >
                         ⚽
                     </div>

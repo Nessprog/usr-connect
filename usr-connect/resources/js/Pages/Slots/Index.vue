@@ -6,6 +6,19 @@ import { computed } from "vue";
 const props = defineProps({
     slots: Array,
 });
+// 1. On définit les emojis (Vérifie bien les virgules !)
+const categoryEmojis = {
+    Buvette: "🍺",
+    Caisse: "💸",
+    Arbitrage: "⚖️",
+    Sécurité: "🛡️",
+    Accueil: "🤝",
+};
+
+// 2. On définit la fonction
+const getEmoji = (category) => {
+    return categoryEmojis[category] || "✨";
+};
 
 // On extrait juste les noms de catégories uniques et le nombre de missions dedans
 const categories = computed(() => {
@@ -58,7 +71,9 @@ const categories = computed(() => {
                         <div
                             class="bg-purple-50 w-20 h-20 rounded-full flex items-center justify-center mb-6 group-hover:bg-purple-100 transition"
                         >
-                            <span class="text-3xl">🍺</span>
+                            <span class="text-3xl">{{
+                                getEmoji(category.name)
+                            }}</span>
                         </div>
 
                         <h2
