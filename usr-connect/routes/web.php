@@ -65,12 +65,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/slots/{slot}/register', [SlotController::class, 'register'])->name('slots.register');
     Route::delete('/slots/{slot}/unregister', [SlotController::class, 'unregister'])->name('slots.unregister');
 
-    // Détails, Edition, Update, Delete, Archives
+    // Détails, Edition, Update, Delete, Archives, PDF
     Route::get('/slots/{slot}', [SlotController::class, 'show'])->name('slots.show');
     Route::get('/slots/{slot}/edit', [SlotController::class, 'edit'])->name('slots.edit');
     Route::put('/slots/{slot}', [SlotController::class, 'update'])->name('slots.update');
     Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');
     Route::get('/slots/archives', [SlotController::class, 'archives'])->name('slots.archives');
+    Route::get('/slots/pdf/{categoryName}', [SlotController::class, 'exportPdf'])->name('slots.pdf');
 
     // --- GESTION DES MEMBRES ---
     // On utilise users.index pour tout le monde (filtré dans la vue)

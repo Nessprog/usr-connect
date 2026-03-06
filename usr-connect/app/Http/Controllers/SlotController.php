@@ -6,6 +6,7 @@ use App\Models\Slot; // Très important pour parler à la base de données !
 use Inertia\Inertia; // Pour qu'il reconnaise Inertia
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; // Pour qu'il reconnaise Auth
+use Barryvdh\DomPDF\Facade\Pdf; //Exportation PDF
 
 class SlotController extends Controller
 {
@@ -97,15 +98,22 @@ class SlotController extends Controller
 
 
     // 1. Affiche le formulaire
-    public function create()
+    public function create(Request $request)
     {
         // Si l'utilisateur n'est pas admin, on le renvoie ailleurs
         if (Auth::user()->role !== 'admin') {
             return redirect()->route('slots.index')->with('error', 'Accès réservé aux administrateurs.');
             return redirect()->route('slots.index')->with('message', "La mission \"$slot->title\" a été créée avec succès.");
         }
+        // On récupère la catégorie passée dans l'URL (si elle existe)
+        $prefilledCategory = $request->query('category');
 
-        return Inertia::render('Slots/Create');
+        return Inertia::render(
+            'Slots/Create',
+            [
+                'prefilledCategory' => $prefilledCategory
+            ]
+        );
     }
 
     // 2. Reçoit les données et les enregistre
@@ -191,5 +199,22 @@ class SlotController extends Controller
         return Inertia::render('Slots/Archives', [
             'slots' => $slots
         ]);
+    }
+
+    public function exportPdf($categoryName)
+    {
+        $slots = Slot::where('category', $categoryName)
+            ->withCount('users') // Compte automatiquement le nombre d'inscrits
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+        $data = [
+            'category' => $categoryName,
+            'slots' => $slots,
+            'date' => date('d/m/Y'),
+        ];
+        //Téléchargement du PDF généré à partir de la vue resources/views/pdf/slots.blade.php
+        $pdf = Pdf::loadView('pdf.slots', $data);
+        return $pdf->download("planning-{$categoryName}-solidafoot.pdf");
     }
 }

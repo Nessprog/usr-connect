@@ -2,6 +2,10 @@
 import { useForm, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
+const props = defineProps({
+    prefilledCategory: String,
+});
+
 const form = useForm({
     title: "",
     description: "",
@@ -9,7 +13,7 @@ const form = useForm({
     end_time: "",
     min_volunteers: 1,
     max_volunteers: 5,
-    category: "",
+    category: props.prefilledCategory || "",
 });
 
 const submit = () => {

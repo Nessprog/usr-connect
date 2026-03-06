@@ -32,18 +32,73 @@ const formatTime = (dateString) => {
     <AuthenticatedLayout>
         <div class="py-12 bg-gray-50 min-h-screen px-4 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
-                <div class="mb-8">
+                <div class="mb-12">
                     <Link
                         :href="route('slots.index')"
-                        class="text-[#5D2E8E] font-bold flex items-center mb-4 hover:underline"
+                        class="text-[#5D2E8E] font-bold flex items-center mb-6 hover:underline"
                     >
                         ← Retour aux pôles
                     </Link>
-                    <h1
-                        class="text-4xl font-black text-gray-900 tracking-tight uppercase italic"
+
+                    <div
+                        class="flex flex-col md:flex-row md:items-center justify-between gap-6"
                     >
-                        Pôle {{ categoryName }}
-                    </h1>
+                        <h1
+                            class="text-4xl font-black text-gray-900 tracking-tight uppercase italic m-0"
+                        >
+                            Pôle {{ categoryName }}
+                        </h1>
+
+                        <div class="flex flex-wrap items-center gap-4">
+                            <Link
+                                :href="
+                                    route('slots.create', {
+                                        category: categoryName,
+                                    })
+                                "
+                                class="inline-flex items-center gap-2 bg-[#5D2E8E] text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#4a2472] transition shadow-lg shadow-purple-100"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M12 4v16m8-8H4"
+                                    />
+                                </svg>
+
+                                Nouvelle Mission
+                            </Link>
+
+                            <a
+                                v-if="categoryName"
+                                :href="route('slots.pdf', categoryName)"
+                                class="inline-flex items-center gap-2 bg-[#5D2E8E] text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#4a2472] transition shadow-lg shadow-purple-100"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    />
+                                </svg>
+                                PDF
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <div
