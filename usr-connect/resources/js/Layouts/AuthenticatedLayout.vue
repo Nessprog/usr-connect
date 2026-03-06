@@ -1,18 +1,90 @@
 <script setup>
-import { ref } from "vue";
+import { computed, watch, ref } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import FlashMessage from "@/Components/FlashMessage.vue";
 import ScrollToTop from "@/Components/ScrollToTop.vue"; //Remonte en haut de la page
 
 const showingNavigationDropdown = ref(false);
+const page = usePage();
+const flashMessage = computed(
+    () => page.props.flash.success || page.props.flash.message,
+);
+const showNotify = ref(false);
+
+// Dès qu'un message arrive, on l'affiche puis on le cache après 4 secondes
+watch(
+    flashMessage,
+    (newVal) => {
+        if (newVal) {
+            showNotify.value = true;
+            // Réglé sur 3000ms (3 secondes)
+            setTimeout(() => {
+                showNotify.value = false;
+            }, 3000);
+        }
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
+    <transition
+        enter-active-class="transform ease-out duration-300 transition"
+        enter-from-class="translate-y-[-100%] opacity-0"
+        enter-to-class="translate-y-0 opacity-100"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+    >
+        <div
+            v-if="showNotify"
+            class="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] w-full max-w-md px-4"
+        >
+            <div
+                class="bg-green-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center justify-between border-2 border-white/20"
+            >
+                <div class="flex items-center gap-3">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                    </svg>
+                    <span class="font-bold">{{ flashMessage }}</span>
+                </div>
+                <button
+                    @click="showNotify = false"
+                    class="hover:bg-white/20 p-1 rounded-lg"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clip-rule="evenodd"
+                        />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </transition>
     <div>
         <div class="min-h-screen bg-gray-100">
             <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur shadow-md">

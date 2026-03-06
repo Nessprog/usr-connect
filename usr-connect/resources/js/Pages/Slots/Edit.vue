@@ -11,6 +11,7 @@ const form = useForm({
     end_time: props.slot.end_time,
     min_volunteers: props.slot.min_volunteers,
     max_volunteers: props.slot.max_volunteers,
+    category: props.slot.category,
 });
 
 const submit = () => {
@@ -116,7 +117,7 @@ const submit = () => {
                             </option>
                             <option value="Buvette">🍺 Buvette</option>
                             <option value="Restauration">
-                                🥘 Restauration (Paëlla, Snack)
+                                🥘 Restauration (Sucré, Snack)
                             </option>
                             <option value="Caisse">💸 Caisse</option>
                         </select>

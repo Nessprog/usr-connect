@@ -1,30 +1,41 @@
 <script setup>
-import { Head, Link, router, usePage } from "@inertiajs/vue3"; // On ajoute router et usePage ici
+import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { computed } from "vue"; // On ajoute computed pour la réactivité
+import { computed } from "vue";
 
 const props = defineProps({
     slot: Object,
 });
 
-// 1. On récupère l'utilisateur connecté
 const user = computed(() => usePage().props.auth.user);
 
-// 2. On vérifie si l'utilisateur est déjà inscrit dans la liste "users" du slot
+// Vérifie si l'utilisateur est dans la liste des inscrits
 const isRegistered = computed(() => {
-    // some() renvoie vrai si l'ID de l'utilisateur est trouvé dans la liste des inscrits
     return props.slot.users.some((u) => u.id === user.value.id);
 });
 
-// 3. Ta fonction pour formater l'heure (inchangée)
+// Vérifie si la mission est complète
+const isFull = computed(() => {
+    return props.slot.users.length >= props.slot.max_volunteers;
+});
+
 const formatTime = (dateString) => {
-    return new Date(dateString).toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
+    return new Date(dateString)
+        .toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+        })
+        .replace(":", "h");
+};
+
+const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
     });
 };
 
-// 4. La logique du bouton (Inscription / Désistement)
 const handleSubscription = () => {
     if (isRegistered.value) {
         if (confirm("Es-tu sûr de vouloir te désister ?")) {
@@ -36,11 +47,7 @@ const handleSubscription = () => {
 };
 
 const deleteSlot = () => {
-    if (
-        confirm(
-            "ATTENTION : Veux-tu vraiment supprimer cette mission et désister tous les bénévoles ?",
-        )
-    ) {
+    if (confirm("ATTENTION : Veux-tu vraiment supprimer cette mission ?")) {
         router.delete(route("slots.destroy", props.slot.id));
     }
 };
@@ -50,97 +57,143 @@ const deleteSlot = () => {
     <Head :title="slot.title" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex justify-between items-center mt-6">
-                <Link
-                    :href="route('slots.index')"
-                    class="text-gray-500 hover:text-gray-700 flex items-center text-sm font-medium"
-                >
-                    <span class="mr-2">←</span> Retour au planning
-                </Link>
-
-                <div
-                    v-if="$page.props.auth.user.role === 'admin'"
-                    class="flex gap-3"
-                >
+        <div class="py-12 bg-gray-50 min-h-screen px-4">
+            <div class="max-w-3xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
                     <Link
-                        :href="route('slots.edit', slot.id)"
-                        class="px-4 py-2 text-xs text-usr-purple font-bold border border-usr-purple rounded hover:bg-purple-50 transition uppercase"
+                        :href="route('slots.category', slot.category)"
+                        class="text-[#5D2E8E] font-bold flex items-center hover:underline"
                     >
-                        Modifier
+                        ← Retour au pôle {{ slot.category }}
                     </Link>
 
-                    <button
-                        @click="deleteSlot"
-                        class="px-4 py-2 text-xs text-red-600 font-bold border border-red-200 rounded hover:bg-red-50 transition uppercase"
-                    >
-                        Supprimer
-                    </button>
-                </div>
-            </div>
-        </template>
-
-        <div class="py-12">
-            <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-                <div
-                    class="bg-white p-6 rounded-lg shadow border-l-4 border-usr-purple"
-                >
-                    <div class="flex justify-between items-start mb-4">
-                        <p class="text-gray-600 text-lg flex-1 mr-4">
-                            {{ slot.description }}
-                        </p>
-
-                        <div class="shrink-0 flex gap-2">
-                            <button
-                                @click="handleSubscription"
-                                :class="
-                                    isRegistered
-                                        ? 'bg-red-500 hover:bg-red-600'
-                                        : 'bg-usr-purple hover:bg-opacity-90'
-                                "
-                                class="px-4 py-2 text-xs text-white font-bold rounded shadow-sm transition transform active:scale-95 whitespace-nowrap uppercase tracking-wider"
-                            >
-                                {{ isRegistered ? "Se désister" : "Rejoindre" }}
-                            </button>
-                        </div>
+                    <div v-if="user.role === 'admin'" class="flex gap-2">
+                        <Link
+                            :href="route('slots.edit', slot.id)"
+                            class="px-4 py-2 text-[10px] bg-white border-2 border-gray-200 text-gray-600 font-black rounded-xl hover:border-[#5D2E8E] hover:text-[#5D2E8E] transition uppercase tracking-widest"
+                        >
+                            Modifier
+                        </Link>
+                        <button
+                            @click="deleteSlot"
+                            class="px-4 py-2 text-[10px] bg-white border-2 border-red-100 text-red-500 font-black rounded-xl hover:bg-red-50 transition uppercase tracking-widest"
+                        >
+                            Supprimer
+                        </button>
                     </div>
+                </div>
 
-                    <hr class="border-gray-100 mb-6" />
+                <div
+                    class="bg-white rounded-[2.5rem] shadow-sm border-t-[8px] border-[#5D2E8E] overflow-hidden"
+                >
+                    <div class="p-8 sm:p-12">
+                        <div
+                            class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8"
+                        >
+                            <h1
+                                class="text-3xl font-black text-gray-900 uppercase italic leading-tight"
+                            >
+                                {{ slot.title }}
+                            </h1>
+                            <div
+                                class="bg-[#F5F3FF] text-[#5D2E8E] px-4 py-2 rounded-xl font-black text-sm"
+                            >
+                                {{ slot.users.length }} /
+                                {{ slot.max_volunteers }} places
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-4 mb-10">
+                            <div
+                                class="bg-gray-50 px-6 py-4 rounded-2xl flex items-center gap-3"
+                            >
+                                <span class="text-2xl">🗓️</span>
+                                <span
+                                    class="font-bold text-gray-700 capitalize"
+                                    >{{ formatDate(slot.start_time) }}</span
+                                >
+                            </div>
+                            <div
+                                class="bg-gray-50 px-6 py-4 rounded-2xl flex items-center gap-3"
+                            >
+                                <span class="text-2xl">🕒</span>
+                                <span class="font-bold text-gray-700">
+                                    {{ formatTime(slot.start_time) }} -
+                                    {{ formatTime(slot.end_time) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-12">
+                            <h3
+                                class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 italic"
+                            >
+                                Description de la mission
+                            </h3>
+                            <p class="text-gray-600 text-lg leading-relaxed">
+                                {{
+                                    slot.description ||
+                                    "Aucune description fournie."
+                                }}
+                            </p>
+                        </div>
+
+                        <button
+                            @click="handleSubscription"
+                            :disabled="!isRegistered && isFull"
+                            :class="[
+                                'w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition transform active:scale-[0.98] shadow-lg',
+                                isRegistered
+                                    ? 'bg-red-600 text-white hover:bg-red-700 shadow-red-100'
+                                    : isFull
+                                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                                      : 'bg-[#5D2E8E] text-white hover:bg-[#4a2472] shadow-purple-100',
+                            ]"
+                        >
+                            <span v-if="isRegistered">Se désister</span>
+                            <span v-else-if="isFull">Mission complète</span>
+                            <span v-else>Rejoindre l'équipe</span>
+                        </button>
+                    </div>
 
                     <div
-                        class="bg-purple-50 p-4 rounded-xl flex items-center justify-center text-usr-purple font-bold mb-8"
+                        class="bg-gray-50 p-8 sm:p-12 border-t border-gray-100"
                     >
-                        <span class="mr-2">🕒</span>
-                        {{ formatTime(slot.start_time) }} -
-                        {{ formatTime(slot.end_time) }}
-                    </div>
+                        <h3
+                            class="font-black text-gray-900 uppercase italic mb-8 flex items-center gap-3"
+                        >
+                            <span class="text-2xl">🙌</span>
+                            L'équipe actuelle
+                        </h3>
 
-                    <h3 class="font-bold text-xl mb-4">
-                        L'équipe de bénévoles ({{ slot.users.length }})
-                    </h3>
-
-                    <ul
-                        v-if="slot.users.length > 0"
-                        class="divide-y divide-gray-100"
-                    >
-                        <li
-                            v-for="user in slot.users"
-                            :key="user.id"
-                            class="py-3 flex items-center"
+                        <div
+                            v-if="slot.users.length > 0"
+                            class="grid grid-cols-1 sm:grid-cols-2 gap-4"
                         >
                             <div
-                                class="h-8 w-8 rounded-full bg-usr-purple text-white flex items-center justify-center text-xs mr-3"
+                                v-for="volunteer in slot.users"
+                                :key="volunteer.id"
+                                class="bg-white p-4 rounded-2xl flex items-center shadow-sm border border-gray-100"
                             >
-                                {{ user.name.charAt(0) }}
+                                <div
+                                    class="h-10 w-10 rounded-full bg-gradient-to-br from-[#5D2E8E] to-purple-400 text-white flex items-center justify-center font-black text-sm mr-4 shrink-0"
+                                >
+                                    {{ volunteer.name.charAt(0).toUpperCase() }}
+                                </div>
+                                <span
+                                    class="text-gray-700 font-bold truncate"
+                                    >{{ volunteer.name }}</span
+                                >
                             </div>
-                            <span class="text-gray-700 font-medium">{{
-                                user.name
-                            }}</span>
-                        </li>
-                    </ul>
-                    <p v-else class="text-gray-500 italic">
-                        Aucun bénévole n'est encore inscrit. Soyez le premier !
-                    </p>
+                        </div>
+
+                        <div
+                            v-else
+                            class="text-center py-8 text-gray-400 font-bold italic border-2 border-dashed border-gray-200 rounded-3xl"
+                        >
+                            Aucun bénévole pour le moment...
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
