@@ -115,14 +115,14 @@ const formatTime = (dateString) => {
                             </div>
 
                             <div
-                                class="space-y-1 mb-8 text-[20px] font-bold text-black italic"
+                                class="space-y-1 mb-8 text-[20px] font-bold text-black normal"
                             >
                                 <p>
                                     <span class="mr-2">🗓️</span>
                                     {{ formatDate(slot.start_time) }}
                                 </p>
                                 <p>
-                                    <span class="mr-2">🕒</span> à
+                                    <span class="mr-2">🕒</span>
                                     {{ formatTime(slot.start_time) }}
                                 </p>
                             </div>
