@@ -27,6 +27,8 @@ class HandleInertiaRequests extends Middleware
      *
      * @return array<string, mixed>
      */
+    // Dans App\Http\Middleware\HandleInertiaRequests.php
+
     public function share(Request $request): array
     {
         return [
@@ -36,6 +38,8 @@ class HandleInertiaRequests extends Middleware
             ],
 
             'flash' => [
+                // On remplace 'message' par 'success' (ou on ajoute les deux)
+                'success' => fn() => $request->session()->get('success'),
                 'message' => fn() => $request->session()->get('message'),
                 'error' => fn() => $request->session()->get('error'),
             ],

@@ -10,9 +10,8 @@ const props = defineProps({
 const categoryEmojis = {
     Buvette: "🍺",
     Caisse: "💸",
-    Arbitrage: "⚽",
-    Sécurité: "🛡️",
-    Accueil: "🤝",
+    Sportif: "⚽", // Assure-toi que c'est 'Sportif' et pas 'Arbitrage'
+    Restauration: "🥘", // Pour la Paëlla et le snack
 };
 
 // 2. On définit la fonction
@@ -40,6 +39,21 @@ const categories = computed(() => {
     <Head title="Pôles de Mission" />
 
     <AuthenticatedLayout>
+        <div
+            v-if="$page.props.flash.success"
+            class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded-r-xl shadow-sm flex justify-between items-center animate-fade-in-down"
+        >
+            <div class="flex items-center">
+                <span class="mr-2 text-xl">✅</span>
+                <span class="font-bold">{{ $page.props.flash.success }}</span>
+            </div>
+            <button
+                @click="$page.props.flash.success = null"
+                class="text-green-500 hover:text-green-700 font-black"
+            >
+                ✕
+            </button>
+        </div>
         <div class="py-12 bg-gray-50 min-h-screen px-4 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
                 <div
@@ -50,6 +64,19 @@ const categories = computed(() => {
                     >
                         Planning Solida'Foot
                     </h1>
+                    <template>
+                        <div
+                            v-if="
+                                $page.props.flash && $page.props.flash.success
+                            "
+                            class="mb-8 p-4 bg-green-500 text-white rounded-2xl font-bold shadow-lg flex justify-between"
+                        >
+                            <span>{{ $page.props.flash.success }}</span>
+                            <button @click="$page.props.flash.success = null">
+                                ✕
+                            </button>
+                        </div>
+                    </template>
                     <Link
                         v-if="$page.props.auth?.user?.role === 'admin'"
                         :href="route('slots.create')"

@@ -9,6 +9,7 @@ const form = useForm({
     end_time: "",
     min_volunteers: 1,
     max_volunteers: 5,
+    category: "",
 });
 
 const submit = () => {
@@ -27,37 +28,47 @@ const submit = () => {
 
                 <form @submit.prevent="submit" class="space-y-4">
                     <div>
-                        <label class="block">Titre</label>
+                        <label class="block font-medium text-sm text-gray-700"
+                            >Titre</label
+                        >
                         <input
                             v-model="form.title"
                             type="text"
-                            class="w-full border-gray-300 rounded shadow-sm focus:border-usr-purple"
+                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                         />
                     </div>
 
                     <div>
-                        <label class="block">Description</label>
+                        <label class="block font-medium text-sm text-gray-700"
+                            >Description</label
+                        >
                         <textarea
                             v-model="form.description"
-                            class="w-full border-gray-300 rounded shadow-sm"
+                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                         ></textarea>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block">Début</label>
+                            <label
+                                class="block font-medium text-sm text-gray-700"
+                                >Début</label
+                            >
                             <input
                                 v-model="form.start_time"
                                 type="datetime-local"
-                                class="w-full border-gray-300 rounded shadow-sm"
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                             />
                         </div>
                         <div>
-                            <label class="block">Fin</label>
+                            <label
+                                class="block font-medium text-sm text-gray-700"
+                                >Fin</label
+                            >
                             <input
                                 v-model="form.end_time"
                                 type="datetime-local"
-                                class="w-full border-gray-300 rounded shadow-sm"
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                             />
                         </div>
                     </div>
@@ -85,13 +96,41 @@ const submit = () => {
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                             />
                         </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700"
+                                >Pôle (Catégorie)</label
+                            >
+                            <select
+                                v-model="form.category"
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple mt-1"
+                                required
+                            >
+                                <option value="" disabled>
+                                    Choisir un pôle...
+                                </option>
+                                <option value="Sportif">
+                                    ⚽ Sportif (Tournois, Arbitrage)
+                                </option>
+                                <option value="Buvette">🍺 Buvette</option>
+                                <option value="Restauration">
+                                    🥘 Restauration (Paëlla, Snack)
+                                </option>
+                                <option value="Caisse">💸 Caisse</option>
+                            </select>
+                        </div>
                     </div>
 
                     <button
                         type="submit"
-                        class="bg-usr-purple text-white px-4 py-2 rounded font-bold"
+                        class="w-full bg-[#5D2E8E] text-white px-4 py-3 rounded-2xl font-black uppercase text-sm tracking-widest shadow-md hover:bg-opacity-90 transition transform hover:scale-[1.02]"
+                        :disabled="form.processing"
                     >
-                        Enregistrer
+                        {{
+                            form.processing
+                                ? "Enregistrement..."
+                                : "Enregistrer la mission"
+                        }}
                     </button>
                 </form>
             </div>
