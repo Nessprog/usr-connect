@@ -11,10 +11,26 @@ const props = defineProps({
 });
 
 // On met à jour notre tableau de stats avec les vraies valeurs
+// On met à jour notre tableau de stats avec les routes cibles
 const stats = [
-    { label: "Missions à venir", value: props.totalMissions, icon: "📅" },
-    { label: "Mes inscriptions", value: props.myMissionsCount, icon: "✅" },
-    { label: "Bénévoles USR", value: props.totalVolunteers, icon: "👥" },
+    {
+        label: "Missions à venir",
+        value: props.totalMissions,
+        icon: "📅",
+        route: "slots.index",
+    },
+    {
+        label: "Mes inscriptions",
+        value: props.myMissionsCount,
+        icon: "✅",
+        route: "slots.my-slots",
+    },
+    {
+        label: "Bénévoles USR",
+        value: props.totalVolunteers,
+        icon: "👥",
+        route: "users.index",
+    },
 ];
 
 // Fonction pour formater la date joliment sur mobile
@@ -34,7 +50,9 @@ const formatDate = (dateString) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2
+                class="font-black text-2xl uppercase italic text-gray-800 leading-tight"
+            >
                 Tableau de bord
             </h2>
         </template>
@@ -55,25 +73,17 @@ const formatDate = (dateString) => {
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
                     <component
-                        :is="stat.label === 'Missions à venir' ? Link : 'div'"
+                        :is="Link"
                         v-for="stat in stats"
                         :key="stat.label"
-                        :href="
-                            stat.label === 'Missions à venir'
-                                ? route('slots.my-slots')
-                                : null
-                        "
-                        class="bg-white p-6 rounded-[2.5rem] shadow-sm flex items-center transition-all"
-                        :class="{
-                            'hover:shadow-md hover:border-b-4 hover:border-[#5D2E8E] group cursor-pointer':
-                                stat.label === 'Missions à venir',
-                        }"
+                        :href="route(stat.route)"
+                        class="bg-white p-6 rounded-[2.5rem] shadow-sm flex items-center transition-all hover:shadow-md hover:border-b-4 hover:border-[#5D2E8E] group cursor-pointer"
                     >
                         <div
-                            class="p-3 rounded-2xl mr-4 transition-transform"
+                            class="p-3 rounded-2xl mr-4 transition-transform group-hover:scale-110"
                             :class="[
                                 stat.label === 'Missions à venir'
-                                    ? 'bg-blue-100 group-hover:scale-110'
+                                    ? 'bg-blue-100'
                                     : stat.label === 'Mes inscriptions'
                                       ? 'bg-green-100'
                                       : 'bg-purple-100',

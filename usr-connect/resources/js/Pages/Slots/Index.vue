@@ -10,7 +10,7 @@ const props = defineProps({
 const categoryEmojis = {
     Buvette: "🍺",
     Caisse: "💸",
-    Arbitrage: "⚖️",
+    Arbitrage: "⚽",
     Sécurité: "🛡️",
     Accueil: "🤝",
 };
@@ -46,7 +46,7 @@ const categories = computed(() => {
                     class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12"
                 >
                     <h1
-                        class="text-4xl font-bold text-black-500 tracking-tight"
+                        class="text-3xl font-black text-black-500 uppercase italic tracking-tight"
                     >
                         Planning Solida'Foot
                     </h1>

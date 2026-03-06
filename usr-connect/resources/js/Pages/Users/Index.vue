@@ -40,7 +40,9 @@ const deleteUser = (user) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2
+                class="font-black text-2xl uppercase italic text-gray-800 leading-tight"
+            >
                 Membres de l'USR Connect
             </h2>
         </template>
