@@ -7,20 +7,19 @@
 
     <title inertia>{{ config('app.name', 'USR Connect') }}</title>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/images/logo.png">
-    <!-- Iphone -->
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
-    <!-- Android -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/apple-touch-icon.png">
-
-    <link rel="icon" type="image/png" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5d2e8e">
 
     <meta name="apple-mobile-web-app-title" content="USR Connect">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 
-    <meta name="theme-color" content="#6B21A8">
+    <meta name="msapplication-TileColor" content="#5d2e8e">
+
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
