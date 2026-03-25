@@ -48,9 +48,7 @@ Elle permet aux administrateurs de créer des missions par pôles et aux bénév
     Terminal 1 (Serveur PHP) :
     php artisan serve
 
-        Terminal 2 (Compilation Assets) :
+    Terminal 2 (Compilation Assets) :
             npm run dev
 
 L'application sera alors accessible sur http://127.0.0.1:8000.
-
-- **Le lien GitHub** : N'oublie pas de remplacer `ton-pseudo` par ton vrai nom d'utilisateur GitHub dans le lien de clonage.

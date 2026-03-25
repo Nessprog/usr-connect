@@ -13,6 +13,7 @@ const categoryEmojis = {
     Caisse: "💸",
     Sportif: "⚽",
     Restauration: "🥘",
+    Parking: "🚗",
 };
 
 const getEmoji = (category) => categoryEmojis[category] || "✨";

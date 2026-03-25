@@ -66,7 +66,7 @@ const formatDate = (dateString) => {
                         Salut {{ $page.props.auth.user.name }} ! 👋
                     </h3>
                     <p class="text-gray-600">
-                        Prêt à aider l'USR aujourd'hui ? Voici un résumé de
+                        Prêt.e à aider l'USR aujourd'hui ? Voici un résumé de
                         l'activité.
                     </p>
                 </div>

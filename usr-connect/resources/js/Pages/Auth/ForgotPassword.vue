@@ -1,10 +1,10 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Head, useForm } from "@inertiajs/vue3";
 
 defineProps({
     status: {
@@ -13,11 +13,11 @@ defineProps({
 });
 
 const form = useForm({
-    email: '',
+    email: "",
 });
 
 const submit = () => {
-    form.post(route('password.email'));
+    form.post(route("password.email"));
 };
 </script>
 
@@ -26,15 +26,13 @@ const submit = () => {
         <Head title="Forgot Password" />
 
         <div class="mb-4 text-sm text-gray-600">
-            Forgot your password? No problem. Just let us know your email
-            address and we will email you a password reset link that will allow
-            you to choose a new one.
+            Vous avez oublié votre mot de passe ? Pas de problème. Il vous
+            suffit de nous communiquer votre adresse e-mail et nous vous
+            enverrons un lien de réinitialisation de mot de passe qui vous
+            permettra d'en choisir un nouveau.
         </div>
 
-        <div
-            v-if="status"
-            class="mb-4 text-sm font-medium text-green-600"
-        >
+        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
         </div>
 
@@ -60,7 +58,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Email Password Reset Link
+                    Envoyé le lien de réinitialisation
                 </PrimaryButton>
             </div>
         </form>

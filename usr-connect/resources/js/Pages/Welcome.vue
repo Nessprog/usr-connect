@@ -27,7 +27,7 @@ defineProps({
             class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl text-center"
         >
             <h2 class="text-2xl font-bold mb-6 text-gray-800">
-                Prêt à aider le club ?
+                Prêt(e) à aider le club ?
             </h2>
 
             <div v-if="$page.props.auth.user">

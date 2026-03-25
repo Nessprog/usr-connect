@@ -128,6 +128,10 @@ class SlotController extends Controller
      */
     public function store(Request $request)
     {
+        // Sécurité : Seul l'admin peut enregistrer
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
         $validated = $request->validate([
             'title'          => 'required|string|max:255',
             'description'    => 'required|string',

@@ -121,6 +121,7 @@ const submit = () => {
                                     🥘 Restauration (Paëlla, Snack)
                                 </option>
                                 <option value="Caisse">💸 Caisse</option>
+                                <option value="Parking">🚗 Parking</option>
                             </select>
                         </div>
                     </div>
