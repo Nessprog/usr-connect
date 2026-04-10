@@ -9,8 +9,11 @@ const props = defineProps({
 
 // Configuration des icônes par pôle
 const categoryEmojis = {
+    Animation: "🎉",
     Buvette: "🍺",
     Caisse: "💸",
+    HDG: "🍨",
+    Logistique: "🛠️",
     Sportif: "⚽",
     Restauration: "🥘",
     Parking: "🚗",
@@ -62,7 +65,7 @@ const categories = computed(() => {
                     <Link
                         v-if="$page.props.auth?.user?.role === 'admin'"
                         :href="route('slots.create')"
-                        class="w-full sm:w-auto text-center bg-[#5D2E8E] text-white px-6 py-4 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg shadow-green-100 hover:bg-[#4a2472] transition"
+                        class="w-full sm:w-auto text-center bg-[#5D2E8E] text-white px-6 py-4 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg shadow-black-100 hover:bg-[#4a2472] transition"
                     >
                         + NOUVELLE MISSION
                     </Link>

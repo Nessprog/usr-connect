@@ -106,3 +106,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 |--------------------------------------------------------------------------
 */
 require __DIR__ . '/auth.php';
+
+
+Route::get('/test-flex', function () {
+    return Inertia::render('MissionFlex');
+});

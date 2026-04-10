@@ -170,6 +170,7 @@ class SlotController extends Controller
             'end_time'       => 'required|date|after:start_time',
             'min_volunteers' => 'required|integer|min:1',
             'max_volunteers' => 'required|integer|min:1|gte:min_volunteers',
+            'category' => 'required|string'
         ]);
 
         $slot->update($validated);

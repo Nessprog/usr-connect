@@ -16,6 +16,17 @@ const form = useForm({
     category: props.prefilledCategory || "",
 });
 
+const POLES = [
+    { id: "Animation", label: "🎉 Animation (Mascotte, Tombola)" },
+    { id: "Buvette", label: "🍺 Buvette" },
+    { id: "Caisse", label: "💸 Caisse" },
+    { id: "HDG", label: "🍨 HDG" },
+    { id: "Logistique", label: "🛠️ Logistique" },
+    { id: "Parking", label: "🚗 Parking" },
+    { id: "Restauration", label: "🥘 Restauration (Sucré, Snack)" },
+    { id: "Sportif", label: "⚽ Sportif (Tournois, Arbitrage)" },
+];
+
 const submit = () => {
     form.post(route("slots.store"));
 };
@@ -113,15 +124,13 @@ const submit = () => {
                                 <option value="" disabled>
                                     Choisir un pôle...
                                 </option>
-                                <option value="Sportif">
-                                    ⚽ Sportif (Tournois, Arbitrage)
+                                <option
+                                    v-for="pole in POLES"
+                                    :key="pole.id"
+                                    :value="pole.id"
+                                >
+                                    {{ pole.label }}
                                 </option>
-                                <option value="Buvette">🍺 Buvette</option>
-                                <option value="Restauration">
-                                    🥘 Restauration (Paëlla, Snack)
-                                </option>
-                                <option value="Caisse">💸 Caisse</option>
-                                <option value="Parking">🚗 Parking</option>
                             </select>
                         </div>
                     </div>

@@ -138,52 +138,63 @@ const getPercentage = (current, max) => {
                                     {{ slot.max_volunteers }}
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="mb-8">
-                                <div
-                                    class="flex justify-between items-center mb-2"
+                        <div class="mb-8">
+                            <div class="flex justify-between items-center mb-2">
+                                <span
+                                    class="text-[12px] font-black text-gray-400 uppercase italic"
+                                    >Remplissage</span
                                 >
-                                    <span
-                                        class="text-[10px] font-black text-gray-400 uppercase italic"
-                                        >Remplissage</span
-                                    >
-                                    <span
-                                        class="text-sm font-black text-[#5D2E8E] italic"
-                                    >
-                                        {{
+                                <span
+                                    class="text-sm font-black text-[#5D2E8E] italic"
+                                >
+                                    {{
+                                        getPercentage(
+                                            slot.users_count,
+                                            slot.max_volunteers,
+                                        )
+                                    }}%
+                                </span>
+                            </div>
+
+                            <div class="w-full bg-gray-100 rounded-full h-2">
+                                <div
+                                    class="bg-[#5D2E8E] h-2 rounded-full transition-all duration-500"
+                                    :style="{
+                                        width:
                                             getPercentage(
                                                 slot.users_count,
                                                 slot.max_volunteers,
-                                            )
-                                        }}%
-                                    </span>
-                                </div>
-                                <div
-                                    class="w-full bg-gray-100 rounded-full h-2"
-                                >
-                                    <div
-                                        class="bg-[#5D2E8E] h-2 rounded-full transition-all duration-500"
-                                        :style="{
-                                            width:
-                                                getPercentage(
-                                                    slot.users_count,
-                                                    slot.max_volunteers,
-                                                ) + '%',
-                                        }"
-                                    ></div>
-                                </div>
+                                            ) + '%',
+                                    }"
+                                ></div>
                             </div>
 
-                            <div class="space-y-3 mb-8 text-[18px] font-bold">
-                                <p class="flex items-center gap-3 capitalize">
-                                    <span class="text-xl">🗓️</span>
-                                    {{ formatDate(slot.start_time) }}
-                                </p>
-                                <p class="flex items-center gap-3">
-                                    <span class="text-xl">🕒</span>
-                                    {{ formatTime(slot.start_time) }}
-                                </p>
+                            <div
+                                v-if="slot.users_count < slot.min_volunteers"
+                                class="mt-2 flex items-center text-red-600"
+                            >
+                                <span
+                                    class="text-[12px] font-black uppercase italic flex items-center gap-1"
+                                >
+                                    ⚠️ Besoin de
+                                    {{ slot.min_volunteers - slot.users_count }}
+                                    bénévole(s)
+                                </span>
                             </div>
+                        </div>
+
+                        <div class="space-y-3 mb-8 text-[18px] font-bold">
+                            <p class="flex items-center gap-3 capitalize">
+                                <span class="text-xl">🗓️</span>
+                                {{ formatDate(slot.start_time) }}
+                            </p>
+                            <p class="flex items-center gap-3">
+                                <span class="text-xl">🕒</span>
+                                {{ formatTime(slot.start_time) }} -
+                                {{ formatTime(slot.end_time) }}
+                            </p>
                         </div>
 
                         <div class="mt-auto">

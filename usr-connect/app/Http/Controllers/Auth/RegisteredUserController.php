@@ -34,7 +34,10 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'phone' => 'required|string|max:20', // Validation du téléphone
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', 'min:4'],
+        ], [
+            'password.min' => 'Le mot de passe doit contenir au moins 4 caractères.',
+            'password.confirmed' => 'Les deux mots de passe ne correspondent pas.',
         ]);
 
         $user = User::create([

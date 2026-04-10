@@ -34,7 +34,7 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" value="Prénom Nom" />
                 <TextInput
                     id="name"
                     type="text"
@@ -205,7 +205,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Register
+                    S'inscrire
                 </PrimaryButton>
             </div>
         </form>

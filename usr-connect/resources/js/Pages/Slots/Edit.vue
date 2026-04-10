@@ -7,12 +7,27 @@ const props = defineProps({ slot: Object });
 const form = useForm({
     title: props.slot.title,
     description: props.slot.description,
-    start_time: props.slot.start_time,
-    end_time: props.slot.end_time,
+    start_time: props.slot.start_time
+        ? props.slot.start_time.replace(" ", "T").substring(0, 16)
+        : "",
+    end_time: props.slot.end_time
+        ? props.slot.end_time.replace(" ", "T").substring(0, 16)
+        : "",
     min_volunteers: props.slot.min_volunteers,
     max_volunteers: props.slot.max_volunteers,
     category: props.slot.category,
 });
+
+const POLES = [
+    { id: "Animation", label: "🎉 Animation (Mascotte, Tombola)" },
+    { id: "Buvette", label: "🍺 Buvette" },
+    { id: "Caisse", label: "💸 Caisse" },
+    { id: "HDG", label: "🍨 HDG" },
+    { id: "Logistique", label: "🛠️ Logistique" },
+    { id: "Parking", label: "🚗 Parking" },
+    { id: "Restauration", label: "🥘 Restauration (Sucré, Snack)" },
+    { id: "Sportif", label: "⚽ Sportif (Tournois, Arbitrage)" },
+];
 
 const submit = () => {
     // On utilise put pour une modification
@@ -21,7 +36,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Créer une mission" />
+    <Head :title="'Modifier ' + props.slot.title" />
     <AuthenticatedLayout>
         <div class="py-12">
             <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
@@ -112,14 +127,13 @@ const submit = () => {
                             <option value="" disabled>
                                 Choisir un pôle...
                             </option>
-                            <option value="Sportif">
-                                ⚽ Sportif (Tournois, Arbitrage)
+                            <option
+                                v-for="pole in POLES"
+                                :key="pole.id"
+                                :value="pole.id"
+                            >
+                                {{ pole.label }}
                             </option>
-                            <option value="Buvette">🍺 Buvette</option>
-                            <option value="Restauration">
-                                🥘 Restauration (Sucré, Snack)
-                            </option>
-                            <option value="Caisse">💸 Caisse</option>
                         </select>
                     </div>
 

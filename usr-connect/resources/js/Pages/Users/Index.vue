@@ -113,18 +113,32 @@ const deleteUser = (user) => {
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
                                         >
-                                            <a
-                                                v-if="user.phone"
-                                                :href="'tel:' + user.phone"
-                                                class="text-indigo-600 hover:underline"
+                                            <template
+                                                v-if="
+                                                    $page.props.auth.user
+                                                        .role === 'admin'
+                                                "
                                             >
-                                                {{ user.phone }}
-                                            </a>
-                                            <span
-                                                v-else
-                                                class="text-gray-400 italic text-xs"
-                                                >Non renseigné</span
-                                            >
+                                                <a
+                                                    v-if="user.phone"
+                                                    :href="'tel:' + user.phone"
+                                                    class="text-indigo-600 hover:underline"
+                                                >
+                                                    {{ user.phone }}
+                                                </a>
+                                                <span
+                                                    v-else
+                                                    class="text-gray-400 italic text-xs"
+                                                    >Non renseigné</span
+                                                >
+                                            </template>
+
+                                            <template v-else>
+                                                <span
+                                                    class="text-gray-400 italic text-xs"
+                                                    >Masqué</span
+                                                >
+                                            </template>
                                         </td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-center"

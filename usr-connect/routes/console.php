@@ -24,4 +24,4 @@ Schedule::call(function () {
             $user->notify(new MissionReminder($slot));
         }
     }
-})->everyMinute();
+})->everyTenMinutes();
