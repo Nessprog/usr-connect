@@ -13,22 +13,18 @@ defineProps({
     <div
         class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6"
     >
-        <div class="mb-8 text-center">
-            <img src="/images/logo.png" class="h-24 mx-auto mb-4" />
-            <h1 class="text-5xl font-extrabold text-usr-purple mb-2">
-                USR Connect
-            </h1>
-            <p class="text-gray-600 text-lg">
-                La plateforme des bénévoles de l'Union Sportive Reventinoise
-            </p>
-        </div>
-
         <div
             class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl text-center"
         >
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">
-                Prêt(e) à aider le club ?
-            </h2>
+            <div class="mb-8 text-center">
+                <img src="/images/logo.png" class="h-24 mx-auto mb-4" />
+                <h1 class="text-5xl font-extrabold text-usr-purple mb-2">
+                    USR Connect
+                </h1>
+                <p class="text-gray-600 text-lg">
+                    La plateforme des bénévoles de l'Union Sportive Reventinoise
+                </p>
+            </div>
 
             <div v-if="$page.props.auth.user">
                 <Link

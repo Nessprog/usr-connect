@@ -152,6 +152,10 @@ class SlotController extends Controller
      */
     public function edit(Slot $slot)
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
         return Inertia::render('Slots/Edit', [
             'slot' => $slot,
             'currentCategory' => $slot->category
@@ -163,6 +167,10 @@ class SlotController extends Controller
      */
     public function update(Request $request, Slot $slot)
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'title'          => 'required|string|max:255',
             'description'    => 'required|string',
@@ -232,6 +240,10 @@ class SlotController extends Controller
      */
     public function exportPdf($categoryName)
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
         $slots = Slot::where('category', $categoryName)
             ->withCount('users')
             ->orderBy('start_time', 'asc')
@@ -245,5 +257,25 @@ class SlotController extends Controller
 
         return Pdf::loadView('pdf.slots', $data)
             ->download("planning-{$categoryName}-solidafoot.pdf");
+    }
+
+    public function exportSingleSlotPdf(Slot $slot)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        // On charge les utilisateurs inscrits pour cette mission
+        $slot->load('users');
+
+        $data = [
+            'slot' => $slot,
+            'users' => $slot->users,
+            'date' => date('d/m/Y à H:i'),
+        ];
+
+        // On utilise une vue différente (plus détaillée pour une seule mission)
+        return Pdf::loadView('pdf.single-slot', $data)
+            ->download("presence-{$slot->title}.pdf");
     }
 }

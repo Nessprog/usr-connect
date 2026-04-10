@@ -68,6 +68,14 @@ const deleteSlot = () => {
                     </Link>
 
                     <div v-if="user.role === 'admin'" class="flex gap-2">
+                        <a
+                            v-if="$page.props.auth.user.role === 'admin'"
+                            :href="route('slots.single.pdf', slot.id)"
+                            target="_blank"
+                            class="px-4 py-2 text-[10px] bg-white border-2 border-gray-200 text-gray-600 font-black rounded-xl hover:border-[#5D2E8E] flex items-center justify-center"
+                        >
+                            EXPORT PDF
+                        </a>
                         <Link
                             :href="route('slots.edit', slot.id)"
                             class="px-4 py-2 text-[10px] bg-white border-2 border-gray-200 text-gray-600 font-black rounded-xl hover:border-[#5D2E8E] hover:text-[#5D2E8E] transition uppercase tracking-widest"

@@ -62,6 +62,10 @@ const getPercentage = (current, max) => {
 
                         <div class="flex flex-wrap items-center gap-4">
                             <Link
+                                v-if="
+                                    categoryName &&
+                                    $page.props.auth.user.role === 'admin'
+                                "
                                 :href="
                                     route('slots.create', {
                                         category: categoryName,
@@ -87,7 +91,10 @@ const getPercentage = (current, max) => {
                             </Link>
 
                             <a
-                                v-if="categoryName"
+                                v-if="
+                                    categoryName &&
+                                    $page.props.auth.user.role === 'admin'
+                                "
                                 :href="route('slots.pdf', categoryName)"
                                 class="inline-flex items-center gap-2 bg-[#5D2E8E] text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#4a2472] transition shadow-lg shadow-purple-100"
                             >

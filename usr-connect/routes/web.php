@@ -72,6 +72,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');
     Route::get('/slots/archives', [SlotController::class, 'archives'])->name('slots.archives');
     Route::get('/slots/pdf/{categoryName}', [SlotController::class, 'exportPdf'])->name('slots.pdf');
+    Route::get('/slots/{slot}/pdf', [SlotController::class, 'exportSingleSlotPdf'])->name('slots.single.pdf')->middleware('auth');
 
     // --- GESTION DES MEMBRES ---
     // On utilise users.index pour tout le monde (filtré dans la vue)
