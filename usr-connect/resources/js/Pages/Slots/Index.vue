@@ -10,6 +10,7 @@ const props = defineProps({
 // Configuration des icônes par pôle
 const categoryEmojis = {
     Animation: "🎉",
+    Basket: "🏀",
     Buvette: "🍺",
     Caisse: "💸",
     HDG: "🍨",
@@ -32,10 +33,12 @@ const categories = computed(() => {
         return acc;
     }, {});
 
-    return Object.keys(counts).map((name) => ({
-        name,
-        count: counts[name],
-    }));
+    return Object.keys(counts)
+        .map((name) => ({
+            name,
+            count: counts[name],
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name)); // <--- Le sort doit être ICI
 });
 </script>
 

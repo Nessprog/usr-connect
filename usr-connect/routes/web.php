@@ -70,6 +70,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/slots/{slot}', [SlotController::class, 'show'])->name('slots.show');
     Route::get('/slots/{slot}/edit', [SlotController::class, 'edit'])->name('slots.edit');
     Route::put('/slots/{slot}', [SlotController::class, 'update'])->name('slots.update');
+    Route::get('/slots/{slot}/duplicate', [SlotController::class, 'duplicate'])->name('slots.duplicate');
     Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');
     Route::get('/slots/archives', [SlotController::class, 'archives'])->name('slots.archives');
     Route::get('/slots/pdf/{categoryName}', [SlotController::class, 'exportPdf'])->name('slots.pdf');

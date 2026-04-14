@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class SlotController extends Controller
 {
@@ -52,9 +53,13 @@ class SlotController extends Controller
      */
     public function unregister(Slot $slot)
     {
-        /** @var User $user */
-        $user = Auth::user();
-        $user->slots()->detach($slot->id);
+        // 1. ON VÉRIFIE D'ABORD (Sécurité)
+        if ($slot->start_time->diffInHours(now(), false) > -24) {
+            return back()->with('error', 'Désistement impossible moins de 24h avant la mission.');
+        }
+
+        // 2. SI C'EST BON, ON DÉINSCRIT
+        $slot->users()->detach(Auth::user()->getAuthIdentifier());
 
         return back()->with('message', "Ton désistement pour la mission \"{$slot->title}\" a bien été pris en compte.");
     }
@@ -190,6 +195,30 @@ class SlotController extends Controller
         $slot->update($validated);
 
         return redirect()->route('slots.show', $slot->id)->with('message', "La mission \"{$slot->title}\" a été mise à jour !");
+    }
+
+    public function duplicate(Slot $slot)
+    {
+        // Sécurité : Seul l'admin peut dupliquer
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        // On prépare les données à renvoyer au formulaire
+        // On ne prend pas l'ID car c'est une NOUVELLE mission
+        $data = [
+            'title'          => $slot->title . ' (Copie)',
+            'description'    => $slot->description,
+            'category'       => $slot->category,
+            'start_time'     => $slot->start_time->format('Y-m-d\TH:i'),
+            'end_time'       => $slot->end_time->format('Y-m-d\TH:i'),
+            'min_volunteers' => $slot->min_volunteers,
+            'max_volunteers' => $slot->max_volunteers,
+        ];
+
+        return Inertia::render('Slots/Create', [
+            'duplicateData' => $data
+        ]);
     }
 
     /**

@@ -2,9 +2,12 @@
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { computed } from "vue";
+import dayjs from "dayjs";
 
 const props = defineProps({
     slot: Object,
+    isRegistered: Boolean,
+    isFull: Boolean,
 });
 
 const user = computed(() => usePage().props.auth.user);
@@ -17,6 +20,12 @@ const isRegistered = computed(() => {
 // Vérifie si la mission est complète
 const isFull = computed(() => {
     return props.slot.users.length >= props.slot.max_volunteers;
+});
+
+// La fonction pour vérifier le délai
+const canUnregister = computed(() => {
+    if (!props.slot.start_time) return false;
+    return dayjs(props.slot.start_time).diff(dayjs(), "hour") >= 24;
 });
 
 const formatTime = (dateString) => {
@@ -38,6 +47,12 @@ const formatDate = (dateString) => {
 
 const handleSubscription = () => {
     if (isRegistered.value) {
+        // AJOUT DE LA SÉCURITÉ ICI
+        if (!canUnregister.value) {
+            alert("Désistement impossible moins de 24h avant le début.");
+            return;
+        }
+
         if (confirm("Es-tu sûr de vouloir te désister ?")) {
             router.delete(route("slots.unregister", props.slot.id));
         }
@@ -58,40 +73,50 @@ const deleteSlot = () => {
 
     <AuthenticatedLayout>
         <div class="py-12 bg-gray-50 min-h-screen px-4">
-            <div class="max-w-3xl mx-auto">
+            <div class="max-w-4xl mx-auto">
                 <div
                     class="flex flex-col items-center gap-6 w-full max-w-4xl mx-auto px-4 md:flex-row md:justify-between mt-8 mb-4"
                 >
                     <div class="flex justify-center">
                         <Link
-                            :href="route('slots.index')"
+                            :href="route('slots.category', slot.category)"
                             class="text-[#5D2E8E] font-bold flex items-center hover:underline"
                         >
-                            ← Retour aux pôles
+                            ← Retour aux missions
                         </Link>
                     </div>
 
                     <div
                         class="flex flex-row items-center justify-center gap-2 w-full md:w-auto"
                     >
-                        <div v-if="user.role === 'admin'" class="flex gap-2">
+                        <div
+                            v-if="user.role === 'admin'"
+                            class="grid grid-cols-2 gap-2 w-full md:flex md:flex-row md:justify-center"
+                        >
                             <a
                                 :href="route('slots.single.pdf', slot.id)"
-                                class="px-3 py-3 text-[10px] bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl text-center min-w-[70px]"
+                                class="px-3 py-3 text-[10px] bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl text-center flex items-center justify-center"
                             >
                                 EXPORT PDF
                             </a>
 
                             <Link
+                                :href="route('slots.duplicate', slot.id)"
+                                class="px-3 py-3 text-[10px] bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl text-center flex items-center justify-center"
+                            >
+                                DUPLIQUER
+                            </Link>
+
+                            <Link
                                 :href="route('slots.edit', slot.id)"
-                                class="px-3 py-3 text-[10px] bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl text-center min-w-[70px]"
+                                class="px-3 py-3 text-[10px] bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl text-center flex items-center justify-center"
                             >
                                 MODIFIER
                             </Link>
 
                             <button
                                 @click="deleteSlot(slot.id)"
-                                class="px-3 py-3 text-[10px] bg-white border-2 border-red-100 text-red-600 font-bold rounded-xl min-w-[70px]"
+                                class="px-3 py-3 text-[10px] bg-white border-2 border-red-100 text-red-600 font-bold rounded-xl text-center flex items-center justify-center"
                             >
                                 SUPPRIMER
                             </button>
@@ -156,17 +181,27 @@ const deleteSlot = () => {
 
                         <button
                             @click="handleSubscription"
-                            :disabled="!isRegistered && isFull"
+                            :disabled="
+                                (!isRegistered && isFull) ||
+                                (isRegistered && !canUnregister)
+                            "
                             :class="[
                                 'w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition transform active:scale-[0.98] shadow-lg',
                                 isRegistered
-                                    ? 'bg-red-600 text-white hover:bg-red-700 shadow-red-100'
+                                    ? canUnregister
+                                        ? 'bg-red-600 text-white hover:bg-red-700 shadow-red-100' // Peut se désister
+                                        : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none border-2 border-dashed border-gray-200' // Trop tard
                                     : isFull
                                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
                                       : 'bg-[#5D2E8E] text-white hover:bg-[#4a2472] shadow-purple-100',
                             ]"
                         >
-                            <span v-if="isRegistered">Se désister</span>
+                            <span v-if="isRegistered && canUnregister"
+                                >Se désister</span
+                            >
+                            <span v-else-if="isRegistered && !canUnregister"
+                                >🔒 Désistement bloqué (-24h)</span
+                            >
                             <span v-else-if="isFull">Mission complète</span>
                             <span v-else>Rejoindre l'équipe</span>
                         </button>

@@ -4,15 +4,25 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 const props = defineProps({ slot: Object });
 
+const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+
+    // On compense le décalage horaire manuellement pour garder l'heure "réelle"
+    const offset = date.getTimezoneOffset() * 60000;
+    const localISOTime = new Date(date.getTime() - offset)
+        .toISOString()
+        .slice(0, 16);
+
+    return localISOTime;
+};
+
 const form = useForm({
     title: props.slot.title,
     description: props.slot.description,
-    start_time: props.slot.start_time
-        ? props.slot.start_time.replace(" ", "T").substring(0, 16)
-        : "",
-    end_time: props.slot.end_time
-        ? props.slot.end_time.replace(" ", "T").substring(0, 16)
-        : "",
+    // On utilise ENFIN la fonction que tu as créée !
+    start_time: formatDateForInput(props.slot.start_time),
+    end_time: formatDateForInput(props.slot.end_time),
     min_volunteers: props.slot.min_volunteers,
     max_volunteers: props.slot.max_volunteers,
     category: props.slot.category,
@@ -20,6 +30,7 @@ const form = useForm({
 
 const POLES = [
     { id: "Animation", label: "🎉 Animation (Mascotte, Tombola)" },
+    { id: "Basket", label: "🏀 Basket" },
     { id: "Buvette", label: "🍺 Buvette" },
     { id: "Caisse", label: "💸 Caisse" },
     { id: "HDG", label: "🍨 HDG" },

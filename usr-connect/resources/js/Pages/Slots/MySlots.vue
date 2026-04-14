@@ -2,6 +2,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 import { computed } from "vue";
+import dayjs from "dayjs";
 
 const props = defineProps({
     slots: Array,
@@ -20,6 +21,21 @@ const totalHours = computed(() => {
     // total.toFixed(1) pour 5.5h (choisis ce que tu préfères)
     return Math.round(total);
 });
+
+// Mission finie si la date de fin est passée
+const isFinished = (endTime) => {
+    if (!endTime) return false;
+    return dayjs().isAfter(dayjs(endTime));
+};
+
+// Fonction pour vérifier si l'utilisateur peut se désinscrire (24h avant le début)
+const canUnregister = (startTime) => {
+    if (!startTime) return false;
+    const now = dayjs();
+    const start = dayjs(startTime);
+    // Retourne vrai s'il reste 24h ou plus
+    return start.diff(now, "hour") >= 24;
+};
 
 const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -106,15 +122,40 @@ const formatTime = (dateString) => {
                     <div
                         v-for="slot in slots"
                         :key="slot.id"
-                        class="bg-white rounded-[2.5rem] shadow-sm border-t-[8px] border-green-500 p-8 flex flex-col justify-between"
+                        :class="[
+                            'rounded-[2.5rem] shadow-sm border-t-[8px] p-8 flex flex-col justify-between transition-all',
+                            isFinished(slot.end_time)
+                                ? 'bg-gray-50 border-gray-300 opacity-70 grayscale-[0.5]'
+                                : 'bg-white border-green-500',
+                        ]"
                     >
                         <div>
-                            <div class="flex justify-between items-start mb-6">
+                            <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <span
-                                        class="text-[10px] font-black text-green-600 bg-green-50 px-2 py-1 rounded mb-2 inline-block tracking-tighter uppercase"
-                                        >Inscrit ✓</span
-                                    >
+                                    <div class="mb-4">
+                                        <div
+                                            v-if="!isFinished(slot.end_time)"
+                                            class="text-[12px] font-black text-green-600 bg-green-100 px-4 py-2 rounded-full mb-2 inline-block tracking-tighter uppercase"
+                                        >
+                                            <span
+                                                class="text-green-600 bg-green-100 font-black uppercase tracking-wider"
+                                            >
+                                                Inscrit ✓
+                                            </span>
+                                        </div>
+
+                                        <div
+                                            v-else
+                                            class="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full"
+                                        >
+                                            <span
+                                                class="text-gray-500 text-[12px] font-black uppercase tracking-wider"
+                                            >
+                                                Mission terminée
+                                            </span>
+                                        </div>
+                                    </div>
+
                                     <Link
                                         :href="route('slots.show', slot.id)"
                                         class="hover:opacity-75 transition group"
@@ -126,7 +167,7 @@ const formatTime = (dateString) => {
                                         </h3>
                                     </Link>
                                     <p
-                                        class="text-[#5D2E8E] text-xs font-black uppercase italic mt-1"
+                                        class="text-[#5D2E8E] text-xs font-black uppercase italic mt-2"
                                     >
                                         Pôle {{ slot.category }}
                                     </p>
@@ -140,7 +181,7 @@ const formatTime = (dateString) => {
                             </div>
 
                             <div
-                                class="space-y-1 mb-8 text-[20px] font-bold text-black border-l-4 border-purple-100 pl-4"
+                                class="space-y-1 mb-5 text-[20px] font-bold text-black border-l-4 border-purple-100 pl-4"
                             >
                                 <p>
                                     <span class="mr-2">🗓️</span>
@@ -153,20 +194,38 @@ const formatTime = (dateString) => {
                             </div>
                         </div>
 
-                        <Link
-                            :href="route('slots.show', slot.id)"
-                            class="w-full text-center bg-[#5D2E8E] text-white py-3 rounded-2xl font-black uppercase tracking-widest hover:bg-purple-700 transition mb-3 inline-block text-sm"
-                        >
-                            Voir les détails
-                        </Link>
-                        <Link
-                            :href="route('slots.unregister', slot.id)"
-                            method="delete"
-                            as="button"
-                            class="w-full text-center bg-red-600 text-white py-3 rounded-2xl font-black uppercase tracking-widest hover:bg-red-500 transition shadow-sm"
-                        >
-                            SE DÉSISTER
-                        </Link>
+                        <div class="flex flex-col gap-3">
+                            <Link
+                                :href="route('slots.show', slot.id)"
+                                :class="[
+                                    'w-full text-center py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-lg',
+                                    isFinished(slot.end_time)
+                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none' // Style grisé
+                                        : 'bg-[#5D2E8E] text-white hover:bg-purple-700 shadow-purple-100', // Style normal
+                                ]"
+                            >
+                                Voir les détails
+                            </Link>
+
+                            <Link
+                                v-if="
+                                    !isFinished(slot.end_time) &&
+                                    canUnregister(slot.start_time)
+                                "
+                                :href="route('slots.unregister', slot.id)"
+                                method="delete"
+                                as="button"
+                                class="w-full text-center bg-red-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-red-500 transition shadow-lg shadow-red-100"
+                            >
+                                Se désister
+                            </Link>
+                            <div
+                                v-else
+                                class="w-full text-center bg-gray-100 text-gray-400 py-3 rounded-2xl font-black uppercase italic border-2 border-dashed border-gray-200"
+                            >
+                                🔒 Désistement bloqué (-24h)
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

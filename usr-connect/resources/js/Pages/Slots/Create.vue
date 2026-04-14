@@ -4,20 +4,22 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 const props = defineProps({
     prefilledCategory: String,
+    duplicateData: Object,
 });
 
 const form = useForm({
-    title: "",
-    description: "",
-    start_time: "",
-    end_time: "",
-    min_volunteers: 1,
-    max_volunteers: 5,
-    category: props.prefilledCategory || "",
+    title: props.duplicateData?.title || "",
+    description: props.duplicateData?.description || "",
+    category: props.duplicateData?.category || props.category || "Buvette",
+    start_time: props.duplicateData?.start_time || "",
+    end_time: props.duplicateData?.end_time || "",
+    min_volunteers: props.duplicateData?.min_volunteers || 1,
+    max_volunteers: props.duplicateData?.max_volunteers || 1,
 });
 
 const POLES = [
     { id: "Animation", label: "🎉 Animation (Mascotte, Tombola)" },
+    { id: "Basket", label: "🏀 Basket" },
     { id: "Buvette", label: "🍺 Buvette" },
     { id: "Caisse", label: "💸 Caisse" },
     { id: "HDG", label: "🍨 HDG" },
