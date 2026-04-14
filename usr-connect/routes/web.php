@@ -86,8 +86,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Actions sur les membres (Rôle et Suppression)
     Route::patch('/users/{user}/role', function (Request $request, User $user) {
-        $user->update(['role' => $request->role]);
-        return back()->with('message', "Rôle de {$user->name} mis à jour !");
+        // On valide que le rôle envoyé fait bien partie de la liste autorisée
+        $validated = $request->validate([
+            'role' => 'required|string|in:admin,volunteer,infirmier',
+        ]);
+
+        $user->update([
+            'role' => $validated['role']
+        ]);
+
+        return back()->with('message', "Rôle de {$user->name} mis à jour en " . $validated['role'] . " !");
     })->name('users.update-role');
 
     Route::delete('/users/{user}', function (User $user) {
@@ -108,7 +116,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 */
 require __DIR__ . '/auth.php';
 
-
+// --- ROUTE DE TEST POUR FLEXBOX ---
 Route::get('/test-flex', function () {
     return Inertia::render('MissionFlex');
 });

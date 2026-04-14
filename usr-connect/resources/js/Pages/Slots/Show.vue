@@ -59,35 +59,43 @@ const deleteSlot = () => {
     <AuthenticatedLayout>
         <div class="py-12 bg-gray-50 min-h-screen px-4">
             <div class="max-w-3xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <Link
-                        :href="route('slots.category', slot.category)"
-                        class="text-[#5D2E8E] font-bold flex items-center hover:underline"
-                    >
-                        ← Retour au pôle {{ slot.category }}
-                    </Link>
-
-                    <div v-if="user.role === 'admin'" class="flex gap-2">
-                        <a
-                            v-if="$page.props.auth.user.role === 'admin'"
-                            :href="route('slots.single.pdf', slot.id)"
-                            target="_blank"
-                            class="px-4 py-2 text-[10px] bg-white border-2 border-gray-200 text-gray-600 font-black rounded-xl hover:border-[#5D2E8E] flex items-center justify-center"
-                        >
-                            EXPORT PDF
-                        </a>
+                <div
+                    class="flex flex-col items-center gap-6 w-full max-w-4xl mx-auto px-4 md:flex-row md:justify-between mt-8 mb-4"
+                >
+                    <div class="flex justify-center">
                         <Link
-                            :href="route('slots.edit', slot.id)"
-                            class="px-4 py-2 text-[10px] bg-white border-2 border-gray-200 text-gray-600 font-black rounded-xl hover:border-[#5D2E8E] hover:text-[#5D2E8E] transition uppercase tracking-widest"
+                            :href="route('slots.index')"
+                            class="text-[#5D2E8E] font-bold flex items-center hover:underline"
                         >
-                            Modifier
+                            ← Retour aux pôles
                         </Link>
-                        <button
-                            @click="deleteSlot"
-                            class="px-4 py-2 text-[10px] bg-white border-2 border-red-100 text-red-500 font-black rounded-xl hover:bg-red-50 transition uppercase tracking-widest"
-                        >
-                            Supprimer
-                        </button>
+                    </div>
+
+                    <div
+                        class="flex flex-row items-center justify-center gap-2 w-full md:w-auto"
+                    >
+                        <div v-if="user.role === 'admin'" class="flex gap-2">
+                            <a
+                                :href="route('slots.single.pdf', slot.id)"
+                                class="px-3 py-3 text-[10px] bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl text-center min-w-[70px]"
+                            >
+                                EXPORT PDF
+                            </a>
+
+                            <Link
+                                :href="route('slots.edit', slot.id)"
+                                class="px-3 py-3 text-[10px] bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl text-center min-w-[70px]"
+                            >
+                                MODIFIER
+                            </Link>
+
+                            <button
+                                @click="deleteSlot(slot.id)"
+                                class="px-3 py-3 text-[10px] bg-white border-2 border-red-100 text-red-600 font-bold rounded-xl min-w-[70px]"
+                            >
+                                SUPPRIMER
+                            </button>
+                        </div>
                     </div>
                 </div>
 

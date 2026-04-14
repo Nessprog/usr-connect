@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Par défaut, tout le monde est 'volunteer' (bénévole)
-            $table->string('role')->default('volunteer');
+            // 'volunteer' par défaut, on ajoute le rôle
+            $table->string('role')->default('volunteer')->after('password');
         });
     }
 

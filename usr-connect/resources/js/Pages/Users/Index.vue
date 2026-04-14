@@ -7,23 +7,16 @@ const props = defineProps({
     users: Array,
 });
 
-const toggleRole = (user) => {
-    const newRole = user.role === "admin" ? "volunteer" : "admin";
-
-    if (confirm(`Changer ${user.name} en ${newRole} ?`)) {
-        // On utilise router.patch pour correspondre à Route::patch dans web.php
-        router.patch(
-            route("users.update-role", user.id),
-            {
-                role: newRole,
-            },
-            {
-                preserveScroll: true,
-                onSuccess: () => console.log("Succès !"),
-                onError: (errors) => console.log("Erreur :", errors),
-            },
-        );
-    }
+const changeRole = (user, newRole) => {
+    router.patch(
+        route("users.update-role", user.id),
+        {
+            role: newRole,
+        },
+        {
+            preserveScroll: true,
+        },
+    );
 };
 
 const deleteUser = (user) => {
@@ -162,7 +155,10 @@ const deleteUser = (user) => {
                                                 {{
                                                     user.role === "admin"
                                                         ? "Admin"
-                                                        : "Bénévole"
+                                                        : user.role ===
+                                                            "volunteer"
+                                                          ? "Bénévole"
+                                                          : "Infirmier"
                                                 }}
                                             </span>
                                         </td>
@@ -178,21 +174,50 @@ const deleteUser = (user) => {
                                                     user.id !==
                                                     $page.props.auth.user.id
                                                 "
-                                                class="flex justify-end space-x-3"
+                                                class="flex justify-end items-center space-x-3"
                                             >
-                                                <button
-                                                    @click="toggleRole(user)"
-                                                    class="text-indigo-600 hover:text-indigo-900"
+                                                <select
+                                                    @change="
+                                                        (e) =>
+                                                            changeRole(
+                                                                user,
+                                                                e.target.value,
+                                                            )
+                                                    "
+                                                    class="text-xs border-gray-300 rounded shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                                 >
-                                                    {{
-                                                        user.role === "admin"
-                                                            ? "Bénévole"
-                                                            : "Admin"
-                                                    }}
-                                                </button>
+                                                    <option
+                                                        value="volunteer"
+                                                        :selected="
+                                                            user.role ===
+                                                            'volunteer'
+                                                        "
+                                                    >
+                                                        Bénévole
+                                                    </option>
+                                                    <option
+                                                        value="infirmier"
+                                                        :selected="
+                                                            user.role ===
+                                                            'infirmier'
+                                                        "
+                                                    >
+                                                        Infirmier
+                                                    </option>
+                                                    <option
+                                                        value="admin"
+                                                        :selected="
+                                                            user.role ===
+                                                            'admin'
+                                                        "
+                                                    >
+                                                        Admin
+                                                    </option>
+                                                </select>
+
                                                 <button
                                                     @click="deleteUser(user)"
-                                                    class="text-red-600 hover:text-red-900"
+                                                    class="text-red-600 hover:text-red-900 ml-2"
                                                 >
                                                     Supprimer
                                                 </button>

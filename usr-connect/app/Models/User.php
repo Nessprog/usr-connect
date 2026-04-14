@@ -23,7 +23,14 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
-        'role', // Ajoute bien 'role' ici si ce n'est pas fait
+        'role',
+    ];
+
+
+    public const ROLES = [
+        'admin' => 'Administrateur',
+        'infirmier' => 'Infirmier',
+        'volunteer' => 'Bénévole',
     ];
 
     /**
