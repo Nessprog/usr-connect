@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SlotController;
+use App\Http\Controllers\InfirmaryController;
 use App\Models\Slot;
 use App\Models\User;
 use Illuminate\Foundation\Application;
@@ -73,6 +74,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/slots/archives', [SlotController::class, 'archives'])->name('slots.archives');
     Route::get('/slots/pdf/{categoryName}', [SlotController::class, 'exportPdf'])->name('slots.pdf');
     Route::get('/slots/{slot}/pdf', [SlotController::class, 'exportSingleSlotPdf'])->name('slots.single.pdf')->middleware('auth');
+
+    //Pôle Infirmerie (accès réservé aux infirmiers et admins)
+    Route::middleware(['auth'])->group(function () {
+
+        // Page accessible aux Admin et Infirmier
+        Route::get('/infirmerie', [InfirmaryController::class, 'index'])
+            ->name('infirmary.index');
+
+        // Action de création réservée à l'Admin
+        Route::post('/infirmerie/slots', [InfirmaryController::class, 'store'])
+            ->name('infirmary.store');
+    });
 
     // --- GESTION DES MEMBRES ---
     // On utilise users.index pour tout le monde (filtré dans la vue)

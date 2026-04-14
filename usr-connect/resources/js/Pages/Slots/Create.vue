@@ -21,6 +21,7 @@ const POLES = [
     { id: "Buvette", label: "🍺 Buvette" },
     { id: "Caisse", label: "💸 Caisse" },
     { id: "HDG", label: "🍨 HDG" },
+    { id: "Infirmerie", label: "🚑 Infirmerie" },
     { id: "Logistique", label: "🛠️ Logistique" },
     { id: "Parking", label: "🚗 Parking" },
     { id: "Restauration", label: "🥘 Restauration (Sucré, Snack)" },

@@ -13,6 +13,7 @@ const categoryEmojis = {
     Buvette: "🍺",
     Caisse: "💸",
     HDG: "🍨",
+    Infirmerie: "🚑",
     Logistique: "🛠️",
     Sportif: "⚽",
     Restauration: "🥘",

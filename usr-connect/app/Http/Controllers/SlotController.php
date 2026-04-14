@@ -16,9 +16,15 @@ class SlotController extends Controller
      */
     public function index()
     {
-        $slots = Slot::where('end_time', '>=', now())
-            ->orderBy('start_time', 'asc')
-            ->get();
+        $user = Auth::user();
+        $query = Slot::where('end_time', '>=', now());
+
+        // SI l'utilisateur est un simple bénévole, on cache l'infirmerie
+        if ($user->role === 'volunteer') {
+            $query->where('category', '!=', 'Infirmerie');
+        }
+
+        $slots = $query->orderBy('start_time', 'asc')->get();
 
         return Inertia::render('Slots/Index', [
             'slots' => $slots,
