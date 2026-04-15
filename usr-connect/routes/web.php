@@ -56,11 +56,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // --- PLANNING & MISSIONS (SLOTS) ---
+    // Routes accessibles à TOUS les bénévoles connectés
     Route::get('/slots', [SlotController::class, 'index'])->name('slots.index');
-    Route::get('/slots/create', [SlotController::class, 'create'])->name('slots.create');
-    Route::post('/slots', [SlotController::class, 'store'])->name('slots.store');
     Route::get('/slots/category/{category}', [SlotController::class, 'category'])->name('slots.category');
 
+    // Routes réservées UNIQUEMENT aux Admins
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/slots/create', [SlotController::class, 'create'])
+            ->name('slots.create');
+
+        Route::post('/slots', [SlotController::class, 'store'])
+            ->name('slots.store');
+    });
 
     // Inscriptions
     Route::post('/slots/{slot}/register', [SlotController::class, 'register'])->name('slots.register');

@@ -183,7 +183,10 @@ const deleteSlot = () => {
                             @click="handleSubscription"
                             :disabled="
                                 (!isRegistered && isFull) ||
-                                (isRegistered && !canUnregister)
+                                (isRegistered && !canUnregister) ||
+                                (!isRegistered &&
+                                    slot.category === 'Infirmerie' &&
+                                    user.role === 'admin')
                             "
                             :class="[
                                 'w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition transform active:scale-[0.98] shadow-lg',
@@ -191,9 +194,11 @@ const deleteSlot = () => {
                                     ? canUnregister
                                         ? 'bg-red-600 text-white hover:bg-red-700 shadow-red-100' // Peut se désister
                                         : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none border-2 border-dashed border-gray-200' // Trop tard
-                                    : isFull
-                                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                                      : 'bg-[#5D2E8E] text-white hover:bg-[#4a2472] shadow-purple-100',
+                                    : isFull ||
+                                        (slot.category === 'Infirmerie' &&
+                                            user.role === 'admin')
+                                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none' // Bloqué (Complet ou Admin à l'infirmerie)
+                                      : 'bg-[#5D2E8E] text-white hover:bg-[#4a2472] shadow-purple-100', // Inscription normale
                             ]"
                         >
                             <span v-if="isRegistered && canUnregister"
@@ -202,6 +207,15 @@ const deleteSlot = () => {
                             <span v-else-if="isRegistered && !canUnregister"
                                 >🔒 Désistement bloqué (-24h)</span
                             >
+                            <span
+                                v-else-if="
+                                    !isRegistered &&
+                                    slot.category === 'Infirmerie' &&
+                                    user.role === 'admin'
+                                "
+                            >
+                                Réservé aux infirmiers
+                            </span>
                             <span v-else-if="isFull">Mission complète</span>
                             <span v-else>Rejoindre l'équipe</span>
                         </button>

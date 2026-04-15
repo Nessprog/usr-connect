@@ -40,6 +40,12 @@ class SlotController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        if ($slot->category === 'Infirmerie') {
+            if ($user->role !== 'infirmier') {
+                return back()->with('error', 'Seuls les infirmiers peuvent s\'inscrire à ces missions.');
+            }
+        }
+
         // syncWithoutDetaching évite les doublons si on clique deux fois
         $user->slots()->syncWithoutDetaching([$slot->id]);
 
@@ -141,11 +147,11 @@ class SlotController extends Controller
     {
         // Sécurité : Seul l'admin peut enregistrer
         if (Auth::user()->role !== 'admin') {
-            abort(403);
+            return redirect()->route('slots.index')->with('error', 'Accès réservé aux administrateurs.');
         }
         $validated = $request->validate([
             'title'          => 'required|string|max:255',
-            'description'    => 'required|string',
+            'description'    => 'nullable|string',
             'category'       => 'required|string',
             'start_time'     => 'required|date',
             'end_time'       => 'required|date|after:start_time',
@@ -184,7 +190,7 @@ class SlotController extends Controller
 
         $validated = $request->validate([
             'title'          => 'required|string|max:255',
-            'description'    => 'required|string',
+            'description'    => 'nullable|string',
             'start_time'     => 'required|date',
             'end_time'       => 'required|date|after:start_time',
             'min_volunteers' => 'required|integer|min:1',
