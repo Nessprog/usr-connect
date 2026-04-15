@@ -46,6 +46,11 @@ class SlotController extends Controller
             }
         }
 
+        // On rafraîchit le compte des utilisateurs pour être sûr
+        if ($slot->users()->count() >= $slot->max_volunteers) {
+            return back()->with('error', 'Désolé, cette mission est déjà complète.');
+        }
+
         // syncWithoutDetaching évite les doublons si on clique deux fois
         $user->slots()->syncWithoutDetaching([$slot->id]);
 
@@ -86,6 +91,12 @@ class SlotController extends Controller
     public function category($categoryName)
     {
         $user = Auth::user();
+
+        // SÉCURITÉ : Si c'est l'infirmerie et que l'utilisateur est un simple bénévole
+        if ($categoryName === 'Infirmerie' && $user->role === 'volunteer') {
+            // On renvoie une erreur 403 (Interdit) ou on redirige avec un message
+            abort(403, 'Vous n\'avez pas accès à ce pôle.');
+        }
 
         $slots = Slot::withCount('users')
             ->with('users') // Eager loading pour éviter le problème N+1 (Performance)
@@ -153,10 +164,14 @@ class SlotController extends Controller
             'title'          => 'required|string|max:255',
             'description'    => 'nullable|string',
             'category'       => 'required|string',
-            'start_time'     => 'required|date',
+            'start_time'     => 'required|date|after:now',
             'end_time'       => 'required|date|after:start_time',
             'min_volunteers' => 'required|integer|min:1',
             'max_volunteers' => 'required|integer|min:1|gte:min_volunteers',
+        ], [
+            // Messages d'erreur personnalisés (Optionnel mais recommandé)
+            'end_time.after' => 'La date de fin doit être postérieure à la date de début.',
+            'max_volunteers.gte' => 'Le maximum de bénévoles doit être supérieur ou égal au minimum.',
         ]);
 
         $slot = Slot::create($validated);
@@ -196,7 +211,12 @@ class SlotController extends Controller
             'min_volunteers' => 'required|integer|min:1',
             'max_volunteers' => 'required|integer|min:1|gte:min_volunteers',
             'category' => 'required|string'
+        ], [
+            // Messages d'erreur personnalisés (Optionnel mais recommandé)
+            'end_time.after' => 'La date de fin doit être postérieure à la date de début.',
+            'max_volunteers.gte' => 'Le maximum de bénévoles doit être supérieur ou égal au minimum.',
         ]);
+
 
         $slot->update($validated);
 

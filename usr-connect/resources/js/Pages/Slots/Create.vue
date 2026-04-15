@@ -54,6 +54,12 @@ const submit = () => {
                             type="text"
                             class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                         />
+                        <p
+                            v-if="form.errors.title"
+                            class="text-red-500 text-xs mt-1"
+                        >
+                            {{ form.errors.title }}
+                        </p>
                     </div>
 
                     <div>
@@ -77,6 +83,12 @@ const submit = () => {
                                 type="datetime-local"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                             />
+                            <div
+                                v-if="form.errors.end_time"
+                                class="text-red-600 text-sm mt-1 font-bold"
+                            >
+                                {{ form.errors.start_time }}
+                            </div>
                         </div>
                         <div>
                             <label
@@ -88,6 +100,12 @@ const submit = () => {
                                 type="datetime-local"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                             />
+                            <div
+                                v-if="form.errors.end_time"
+                                class="text-red-600 text-sm mt-1 font-bold"
+                            >
+                                {{ form.errors.end_time }}
+                            </div>
                         </div>
                     </div>
 
@@ -102,6 +120,12 @@ const submit = () => {
                                 v-model="form.min_volunteers"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                             />
+                            <div
+                                v-if="form.errors.end_time"
+                                class="text-red-600 text-sm mt-1 font-bold"
+                            >
+                                {{ form.errors.min_volunteers }}
+                            </div>
                         </div>
                         <div>
                             <label
@@ -113,6 +137,12 @@ const submit = () => {
                                 v-model="form.max_volunteers"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:border-usr-purple focus:ring-usr-purple"
                             />
+                            <div
+                                v-if="form.errors.end_time"
+                                class="text-red-600 text-sm mt-1 font-bold"
+                            >
+                                {{ form.errors.max_volunteers }}
+                            </div>
                         </div>
                         <div>
                             <label

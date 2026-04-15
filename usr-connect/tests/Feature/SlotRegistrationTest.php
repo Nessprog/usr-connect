@@ -74,6 +74,18 @@ class SlotRegistrationTest extends TestCase
         $response->assertSessionHas('error', 'Accès réservé aux administrateurs.');
     }
 
+    public function test_un_benevole_ne_peut_pas_acceder_a_la_liste_infirmerie_via_url()
+    {
+        $volunteer = User::factory()->create(['role' => 'volunteer']);
+
+        // On tente d'accéder à l'URL directement
+        $response = $this->actingAs($volunteer)
+            ->get('/slots/category/Infirmerie');
+
+        // On s'attend à ce que l'accès soit refusé (403)
+        $response->assertStatus(403);
+    }
+
     public function test_un_benevole_ne_peut_pas_sinscrire_a_infirmerie()
     {
         // 1. Un bénévole standard
@@ -121,5 +133,20 @@ class SlotRegistrationTest extends TestCase
         $response->assertSessionHas('error', 'Seuls les infirmiers peuvent s\'inscrire à ces missions.');
 
         $this->assertCount(0, $slot->fresh()->users);
+    }
+
+    public function test_un_utilisateur_ne_peut_pas_sinscrire_si_la_mission_est_complete()
+    {
+        $slot = Slot::factory()->create(['max_volunteers' => 1]);
+        $volunteer1 = User::factory()->create(['role' => 'volunteer']);
+        $volunteer2 = User::factory()->create(['role' => 'volunteer']);
+
+        // Le premier s'inscrit : OK
+        $this->actingAs($volunteer1)->post(route('slots.register', $slot));
+
+        // Le deuxième tente de s'inscrire : DOIT ÉCHOUER
+        $response = $this->actingAs($volunteer2)->post(route('slots.register', $slot));
+
+        $this->assertCount(1, $slot->fresh()->users); // Il ne doit y avoir qu'une personne
     }
 }

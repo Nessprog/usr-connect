@@ -36,8 +36,8 @@ class InfirmaryController extends Controller
 
         $validated = $request->validate([
             'title'          => 'required|string|max:255',
-            'description'    => 'required|string',
-            'start_time'     => 'required|date',
+            'description'    => 'nullable|string',
+            'start_time'     => 'required|date|after_or_equal:now',
             'end_time'       => 'required|date|after:start_time',
             'min_volunteers' => 'required|integer|min:1',
             'max_volunteers' => 'required|integer|min:1|gte:min_volunteers',
